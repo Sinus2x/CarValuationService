@@ -4,12 +4,58 @@ import numpy as np
 import pandas as pd
 
 from sklearn.feature_extraction.text import CountVectorizer
+from scipy.stats import entropy
 
-import ipywidgets as widgets
-from ipywidgets.embed import embed_minimal_html
-
-from IPython.display import display, clear_output
 from IPython.core.display import HTML
+
+
+class MultiCatManager():
+    def __init__(self, train_df: pd.DataFrame, test_df: pd.DataFrame, multicats: list, name: str) -> None:
+        self.train_df = train_df
+        self.test_df = test_df
+        self.multicats = multicats
+        self.name = name
+        self.cv_dict = {}
+
+    def build(self) -> None:
+        for multicat in self.multicats:
+            values = pd.unique(np.concatenate([self.train_df[multicat].unique(), self.test_df[multicat].unique()]))
+            cv = CountVectorizer(preprocessor=lambda x: str(x).strip('[]'), tokenizer=lambda x: x.replace(', ', ',').split(','))
+            cv.fit(values)
+            self.cv_dict[multicat] = cv
+
+    def get_entropy(self, df: pd.DataFrame) -> list:
+        result = []
+        for multicat in self.multicats:
+            cv = self.cv_dict[multicat]
+            transformed = cv.transform(df[multicat].values).toarray()
+            _, counts = np.unique(transformed, return_counts=True, axis=0)
+            result.append(entropy(counts, base=2))
+
+        return result
+
+    def get_variance(self, df: pd.DataFrame, column: str) -> list:
+        result = []
+
+        def sum_of_sqrs(arr):
+            mean = arr.mean()
+            return ((arr - mean) ** 2).sum()
+
+        for multicat in self.multicats:
+            cv = self.cv_dict[multicat]
+            transformed = cv.transform(df[multicat].values).toarray()
+            transformed = np.apply_along_axis(str, axis=1, arr=transformed)
+            temp_df = pd.DataFrame()
+            temp_df[multicat] = transformed
+            temp_df[column] = df[column].values
+
+            all_var = sum_of_sqrs(df[column].values)
+            agg = pd.pivot_table(temp_df, index=multicat, aggfunc=[sum_of_sqrs])
+            cat_sum_of_var_sqd = agg[agg.columns[0]].sum()
+            r2 = 1 - (cat_sum_of_var_sqd /all_var )
+            result.append(r2)
+
+        return result
 
 
 def get_multicat_info(values: np.array, column: str, dfs: list, names: list, options: pd.DataFrame):
@@ -70,6 +116,7 @@ def generate_widget_html(filename: str, feature_names: list, train_df, dealer_df
         file.write(''.join(out))
 
     # display(accordion)
+
 
 def get_widget_html(filename: str, feature_names: list, train_df, dealer_df, advert_df, test_df, options):
     if not os.path.isfile(f'./{filename}.html'):

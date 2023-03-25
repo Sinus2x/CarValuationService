@@ -36,7 +36,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -14465,6 +14464,10 @@ a.anchor-link {
   display: none;
 }
 
+.highlight  {
+  margin: 0.4em;
+}
+
 /* Input area styling */
 .jp-InputArea {
   overflow: hidden;
@@ -14474,26 +14477,9 @@ a.anchor-link {
   overflow: hidden;
 }
 
-.CodeMirror.cm-s-jupyter .highlight pre {
-/* weird, but --jp-code-padding defined to be 5px but 4px horizontal padding is hardcoded for pre.CodeMirror-line */
-  padding: var(--jp-code-padding) 4px;
+.CodeMirror pre {
   margin: 0;
-
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  color: inherit;
-
-}
-
-.jp-OutputArea-output pre {
-  line-height: inherit;
-  font-family: inherit;
-}
-
-.jp-RenderedText pre {
-  color: var(--jp-content-font-color1);
-  font-size: var(--jp-code-font-size);
+  padding: 0;
 }
 
 /* Using table instead of flexbox so that we can use break-inside property */
@@ -14537,10 +14523,6 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 /* Hiding the collapser by default */
 .jp-Collapser {
   display: none;
-}
-
-@page {
-    margin: 0.5in; /* Margin for each printed piece of paper */
 }
 
 @media print {
@@ -14590,7 +14572,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
     </script>
     <!-- End of mathjax configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14609,12 +14591,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
-<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">CountVectorizer</span>
-
-<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
-<span class="kn">from</span> <span class="nn">ipywidgets.embed</span> <span class="kn">import</span> <span class="n">embed_minimal_html</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
-<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">get_widget_html</span><span class="p">,</span> <span class="n">get_multicat_info</span><span class="p">,</span> <span class="n">MultiCatManager</span>
 
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
@@ -14628,7 +14605,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14656,7 +14633,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14678,7 +14655,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
 
@@ -14695,7 +14674,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14717,7 +14696,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
 
@@ -14735,7 +14716,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 
 </div>
-<div  class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14746,7 +14727,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 </div>
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14769,7 +14750,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -14805,7 +14788,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14821,7 +14804,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14893,7 +14876,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14915,7 +14898,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
 
@@ -14932,7 +14917,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -14957,7 +14942,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
 
@@ -15561,7 +15548,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15577,7 +15564,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15596,7 +15583,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15618,7 +15605,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -15655,7 +15644,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 
 </div>
-<div  class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15671,7 +15660,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 </div>
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15694,7 +15683,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[13]:</div>
 
@@ -15766,7 +15757,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15788,7 +15779,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
 
@@ -15806,7 +15799,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 
 </div>
-<div  class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15818,7 +15811,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 </div>
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15837,7 +15830,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15859,7 +15852,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
 
@@ -15876,7 +15871,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15898,7 +15893,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[17]:</div>
 
@@ -15915,7 +15912,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -15937,7 +15934,9 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
 
@@ -15956,28 +15955,12 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">get_widget_html</span><span class="p">,</span> <span class="n">get_multicat_info</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Передняя левая фара&#39;</span><span class="p">,</span> <span class="s1">&#39;Передняя правая фара&#39;</span><span class="p">,</span> <span class="s1">&#39;Правое зеркало&#39;</span><span class="p">,</span>
@@ -16000,12 +15983,1080 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 </div>
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;train_df&#39;</span><span class="p">,</span> <span class="s1">&#39;dealer_df&#39;</span><span class="p">,</span> <span class="s1">&#39;advert_df&#39;</span><span class="p">,</span> <span class="s1">&#39;test_df&#39;</span><span class="p">]</span>
+<span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">train_df</span><span class="p">,</span> <span class="n">dealer_df</span><span class="p">,</span> <span class="n">advert_df</span><span class="p">,</span> <span class="n">test_df</span><span class="p">]</span>
+
+<span class="n">df_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">df_names</span><span class="p">,</span> <span class="n">df_list</span><span class="p">)}</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;any damage&#39;</span><span class="p">,</span> <span class="s1">&#39;mean if damaged&#39;</span><span class="p">,</span> <span class="s1">&#39;max if damaged&#39;</span><span class="p">]</span>
+<span class="n">damage_info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">df_names</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">damage_index</span><span class="p">)</span>
+<span class="n">damage_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;any damage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">damage_features</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_list</span><span class="p">]</span>
+<span class="n">damage_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;mean if damaged&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">damage_features</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_list</span><span class="p">]</span>
+<span class="n">damage_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;max if damaged&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">damage_features</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_list</span><span class="p">]</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_info</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[22]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>train_df</th>
+      <th>dealer_df</th>
+      <th>advert_df</th>
+      <th>test_df</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>any damage</th>
+      <td>72461</td>
+      <td>243</td>
+      <td>72218</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <th>mean if damaged</th>
+      <td>2.137729</td>
+      <td>1.979424</td>
+      <td>2.138262</td>
+      <td>1.9375</td>
+    </tr>
+    <tr>
+      <th>max if damaged</th>
+      <td>21</td>
+      <td>8</td>
+      <td>21</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_manager</span> <span class="o">=</span> <span class="n">MultiCatManager</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span><span class="p">,</span> <span class="n">damage_features</span><span class="p">,</span> <span class="s1">&#39;damage_features&#39;</span><span class="p">)</span>
+<span class="n">damage_manager</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">damage_features</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">damage_stats</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">damage_manager</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">temp_mask</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">damage_features</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">damage_stats</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_damaged&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">damage_manager</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">temp_mask</span><span class="p">])</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>train_df
+dealer_df
+advert_df
+test_df
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;Total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">damage_stats</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_stats</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">highlight_quantile</span><span class="p">(</span><span class="n">q_left</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[26]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<style type="text/css">
+#T_18801_row4_col0, #T_18801_row4_col1, #T_18801_row4_col4, #T_18801_row4_col5, #T_18801_row5_col2, #T_18801_row5_col3, #T_18801_row5_col6, #T_18801_row5_col7, #T_18801_row6_col2, #T_18801_row6_col3, #T_18801_row9_col0, #T_18801_row9_col1, #T_18801_row9_col4, #T_18801_row9_col5, #T_18801_row9_col6, #T_18801_row9_col7, #T_18801_row11_col0, #T_18801_row11_col1, #T_18801_row11_col2, #T_18801_row11_col3, #T_18801_row11_col4, #T_18801_row11_col5, #T_18801_row14_col6, #T_18801_row14_col7, #T_18801_row15_col0, #T_18801_row15_col1, #T_18801_row15_col4, #T_18801_row15_col5, #T_18801_row15_col6, #T_18801_row15_col7, #T_18801_row17_col2, #T_18801_row17_col3, #T_18801_row18_col0, #T_18801_row18_col1, #T_18801_row18_col2, #T_18801_row18_col3, #T_18801_row18_col4, #T_18801_row18_col5, #T_18801_row18_col6, #T_18801_row18_col7, #T_18801_row21_col0, #T_18801_row21_col1, #T_18801_row21_col2, #T_18801_row21_col3, #T_18801_row21_col4, #T_18801_row21_col5, #T_18801_row21_col6, #T_18801_row21_col7 {
+  background-color: yellow;
+}
+</style>
+<table id="T_18801">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_18801_level0_col0" class="col_heading level0 col0" >train_df</th>
+      <th id="T_18801_level0_col1" class="col_heading level0 col1" >train_df_damaged</th>
+      <th id="T_18801_level0_col2" class="col_heading level0 col2" >dealer_df</th>
+      <th id="T_18801_level0_col3" class="col_heading level0 col3" >dealer_df_damaged</th>
+      <th id="T_18801_level0_col4" class="col_heading level0 col4" >advert_df</th>
+      <th id="T_18801_level0_col5" class="col_heading level0 col5" >advert_df_damaged</th>
+      <th id="T_18801_level0_col6" class="col_heading level0 col6" >test_df</th>
+      <th id="T_18801_level0_col7" class="col_heading level0 col7" >test_df_damaged</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_18801_level0_row0" class="row_heading level0 row0" >Передняя левая фара</th>
+      <td id="T_18801_row0_col0" class="data row0 col0" >0.014783</td>
+      <td id="T_18801_row0_col1" class="data row0 col1" >0.194193</td>
+      <td id="T_18801_row0_col2" class="data row0 col2" >0.000436</td>
+      <td id="T_18801_row0_col3" class="data row0 col3" >0.077050</td>
+      <td id="T_18801_row0_col4" class="data row0 col4" >0.015560</td>
+      <td id="T_18801_row0_col5" class="data row0 col5" >0.194542</td>
+      <td id="T_18801_row0_col6" class="data row0 col6" >0.000000</td>
+      <td id="T_18801_row0_col7" class="data row0 col7" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row1" class="row_heading level0 row1" >Передняя правая фара</th>
+      <td id="T_18801_row1_col0" class="data row1 col0" >0.014965</td>
+      <td id="T_18801_row1_col1" class="data row1 col1" >0.196455</td>
+      <td id="T_18801_row1_col2" class="data row1 col2" >0.000218</td>
+      <td id="T_18801_row1_col3" class="data row1 col3" >0.038537</td>
+      <td id="T_18801_row1_col4" class="data row1 col4" >0.015759</td>
+      <td id="T_18801_row1_col5" class="data row1 col5" >0.196904</td>
+      <td id="T_18801_row1_col6" class="data row1 col6" >0.001503</td>
+      <td id="T_18801_row1_col7" class="data row1 col7" >0.337290</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row2" class="row_heading level0 row2" >Правое зеркало</th>
+      <td id="T_18801_row2_col0" class="data row2 col0" >0.006613</td>
+      <td id="T_18801_row2_col1" class="data row2 col1" >0.090919</td>
+      <td id="T_18801_row2_col2" class="data row2 col2" >0.000218</td>
+      <td id="T_18801_row2_col3" class="data row2 col3" >0.038537</td>
+      <td id="T_18801_row2_col4" class="data row2 col4" >0.006958</td>
+      <td id="T_18801_row2_col5" class="data row2 col5" >0.090982</td>
+      <td id="T_18801_row2_col6" class="data row2 col6" >0.000000</td>
+      <td id="T_18801_row2_col7" class="data row2 col7" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row3" class="row_heading level0 row3" >Левое зеркало</th>
+      <td id="T_18801_row3_col0" class="data row3 col0" >0.007678</td>
+      <td id="T_18801_row3_col1" class="data row3 col1" >0.104543</td>
+      <td id="T_18801_row3_col2" class="data row3 col2" >0.000630</td>
+      <td id="T_18801_row3_col3" class="data row3 col3" >0.107307</td>
+      <td id="T_18801_row3_col4" class="data row3 col4" >0.008067</td>
+      <td id="T_18801_row3_col5" class="data row3 col5" >0.104516</td>
+      <td id="T_18801_row3_col6" class="data row3 col6" >0.000000</td>
+      <td id="T_18801_row3_col7" class="data row3 col7" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row4" class="row_heading level0 row4" >Капот</th>
+      <td id="T_18801_row4_col0" class="data row4 col0" >0.092940</td>
+      <td id="T_18801_row4_col1" class="data row4 col1" >1.099443</td>
+      <td id="T_18801_row4_col2" class="data row4 col2" >0.004193</td>
+      <td id="T_18801_row4_col3" class="data row4 col3" >0.569302</td>
+      <td id="T_18801_row4_col4" class="data row4 col4" >0.097664</td>
+      <td id="T_18801_row4_col5" class="data row4 col5" >1.100899</td>
+      <td id="T_18801_row4_col6" class="data row4 col6" >0.001503</td>
+      <td id="T_18801_row4_col7" class="data row4 col7" >0.337290</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row5" class="row_heading level0 row5" >Заднее правое крыло</th>
+      <td id="T_18801_row5_col0" class="data row5 col0" >0.082527</td>
+      <td id="T_18801_row5_col1" class="data row5 col1" >0.978559</td>
+      <td id="T_18801_row5_col2" class="data row5 col2" >0.007034</td>
+      <td id="T_18801_row5_col3" class="data row5 col3" >0.955589</td>
+      <td id="T_18801_row5_col4" class="data row5 col4" >0.086587</td>
+      <td id="T_18801_row5_col5" class="data row5 col5" >0.978498</td>
+      <td id="T_18801_row5_col6" class="data row5 col6" >0.004022</td>
+      <td id="T_18801_row5_col7" class="data row5 col7" >0.696212</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row6" class="row_heading level0 row6" >Заднее левое крыло</th>
+      <td id="T_18801_row6_col0" class="data row6 col0" >0.082058</td>
+      <td id="T_18801_row6_col1" class="data row6 col1" >0.973372</td>
+      <td id="T_18801_row6_col2" class="data row6 col2" >0.006355</td>
+      <td id="T_18801_row6_col3" class="data row6 col3" >0.870185</td>
+      <td id="T_18801_row6_col4" class="data row6 col4" >0.086117</td>
+      <td id="T_18801_row6_col5" class="data row6 col5" >0.973496</td>
+      <td id="T_18801_row6_col6" class="data row6 col6" >0.003006</td>
+      <td id="T_18801_row6_col7" class="data row6 col7" >0.668564</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row7" class="row_heading level0 row7" >Передняя левая дверь</th>
+      <td id="T_18801_row7_col0" class="data row7 col0" >0.073814</td>
+      <td id="T_18801_row7_col1" class="data row7 col1" >0.891721</td>
+      <td id="T_18801_row7_col2" class="data row7 col2" >0.005056</td>
+      <td id="T_18801_row7_col3" class="data row7 col3" >0.717618</td>
+      <td id="T_18801_row7_col4" class="data row7 col4" >0.077509</td>
+      <td id="T_18801_row7_col5" class="data row7 col5" >0.892140</td>
+      <td id="T_18801_row7_col6" class="data row7 col6" >0.000000</td>
+      <td id="T_18801_row7_col7" class="data row7 col7" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row8" class="row_heading level0 row8" >Крыша</th>
+      <td id="T_18801_row8_col0" class="data row8 col0" >0.014644</td>
+      <td id="T_18801_row8_col1" class="data row8 col1" >0.198926</td>
+      <td id="T_18801_row8_col2" class="data row8 col2" >0.000848</td>
+      <td id="T_18801_row8_col3" class="data row8 col3" >0.145771</td>
+      <td id="T_18801_row8_col4" class="data row8 col4" >0.015397</td>
+      <td id="T_18801_row8_col5" class="data row8 col5" >0.198982</td>
+      <td id="T_18801_row8_col6" class="data row8 col6" >0.000000</td>
+      <td id="T_18801_row8_col7" class="data row8 col7" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row9" class="row_heading level0 row9" >Переднее правое крыло</th>
+      <td id="T_18801_row9_col0" class="data row9 col0" >0.084892</td>
+      <td id="T_18801_row9_col1" class="data row9 col1" >1.014957</td>
+      <td id="T_18801_row9_col2" class="data row9 col2" >0.005289</td>
+      <td id="T_18801_row9_col3" class="data row9 col3" >0.760550</td>
+      <td id="T_18801_row9_col4" class="data row9 col4" >0.089158</td>
+      <td id="T_18801_row9_col5" class="data row9 col5" >1.015680</td>
+      <td id="T_18801_row9_col6" class="data row9 col6" >0.004022</td>
+      <td id="T_18801_row9_col7" class="data row9 col7" >0.696212</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row10" class="row_heading level0 row10" >Заднее стекло</th>
+      <td id="T_18801_row10_col0" class="data row10 col0" >0.001649</td>
+      <td id="T_18801_row10_col1" class="data row10 col1" >0.023874</td>
+      <td id="T_18801_row10_col2" class="data row10 col2" >0.000000</td>
+      <td id="T_18801_row10_col3" class="data row10 col3" >0.000000</td>
+      <td id="T_18801_row10_col4" class="data row10 col4" >0.001740</td>
+      <td id="T_18801_row10_col5" class="data row10 col5" >0.023945</td>
+      <td id="T_18801_row10_col6" class="data row10 col6" >0.000000</td>
+      <td id="T_18801_row10_col7" class="data row10 col7" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row11" class="row_heading level0 row11" >Задний бампер</th>
+      <td id="T_18801_row11_col0" class="data row11 col0" >0.124419</td>
+      <td id="T_18801_row11_col1" class="data row11 col1" >1.370534</td>
+      <td id="T_18801_row11_col2" class="data row11 col2" >0.008731</td>
+      <td id="T_18801_row11_col3" class="data row11 col3" >1.130890</td>
+      <td id="T_18801_row11_col4" class="data row11 col4" >0.130540</td>
+      <td id="T_18801_row11_col5" class="data row11 col5" >1.371198</td>
+      <td id="T_18801_row11_col6" class="data row11 col6" >0.003006</td>
+      <td id="T_18801_row11_col7" class="data row11 col7" >0.668564</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row12" class="row_heading level0 row12" >Передняя правая дверь</th>
+      <td id="T_18801_row12_col0" class="data row12 col0" >0.070464</td>
+      <td id="T_18801_row12_col1" class="data row12 col1" >0.853427</td>
+      <td id="T_18801_row12_col2" class="data row12 col2" >0.005658</td>
+      <td id="T_18801_row12_col3" class="data row12 col3" >0.813411</td>
+      <td id="T_18801_row12_col4" class="data row12 col4" >0.073959</td>
+      <td id="T_18801_row12_col5" class="data row12 col5" >0.853480</td>
+      <td id="T_18801_row12_col6" class="data row12 col6" >0.002801</td>
+      <td id="T_18801_row12_col7" class="data row12 col7" >0.543564</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row13" class="row_heading level0 row13" >Задняя правая фара</th>
+      <td id="T_18801_row13_col0" class="data row13 col0" >0.010660</td>
+      <td id="T_18801_row13_col1" class="data row13 col1" >0.143039</td>
+      <td id="T_18801_row13_col2" class="data row13 col2" >0.000436</td>
+      <td id="T_18801_row13_col3" class="data row13 col3" >0.077050</td>
+      <td id="T_18801_row13_col4" class="data row13 col4" >0.011218</td>
+      <td id="T_18801_row13_col5" class="data row13 col5" >0.143232</td>
+      <td id="T_18801_row13_col6" class="data row13 col6" >0.000000</td>
+      <td id="T_18801_row13_col7" class="data row13 col7" >0.000000</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row14" class="row_heading level0 row14" >Дверь багажника</th>
+      <td id="T_18801_row14_col0" class="data row14 col0" >0.070706</td>
+      <td id="T_18801_row14_col1" class="data row14 col1" >0.863184</td>
+      <td id="T_18801_row14_col2" class="data row14 col2" >0.005936</td>
+      <td id="T_18801_row14_col3" class="data row14 col3" >0.800491</td>
+      <td id="T_18801_row14_col4" class="data row14 col4" >0.074205</td>
+      <td id="T_18801_row14_col5" class="data row14 col5" >0.863158</td>
+      <td id="T_18801_row14_col6" class="data row14 col6" >0.004509</td>
+      <td id="T_18801_row14_col7" class="data row14 col7" >0.993393</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row15" class="row_heading level0 row15" >Переднее левое крыло</th>
+      <td id="T_18801_row15_col0" class="data row15 col0" >0.091068</td>
+      <td id="T_18801_row15_col1" class="data row15 col1" >1.079423</td>
+      <td id="T_18801_row15_col2" class="data row15 col2" >0.004976</td>
+      <td id="T_18801_row15_col3" class="data row15 col3" >0.726176</td>
+      <td id="T_18801_row15_col4" class="data row15 col4" >0.095663</td>
+      <td id="T_18801_row15_col5" class="data row15 col5" >1.080422</td>
+      <td id="T_18801_row15_col6" class="data row15 col6" >0.005807</td>
+      <td id="T_18801_row15_col7" class="data row15 col7" >1.186278</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row16" class="row_heading level0 row16" >Лобовое стекло</th>
+      <td id="T_18801_row16_col0" class="data row16 col0" >0.033869</td>
+      <td id="T_18801_row16_col1" class="data row16 col1" >0.400195</td>
+      <td id="T_18801_row16_col2" class="data row16 col2" >0.001881</td>
+      <td id="T_18801_row16_col3" class="data row16 col3" >0.283818</td>
+      <td id="T_18801_row16_col4" class="data row16 col4" >0.035572</td>
+      <td id="T_18801_row16_col5" class="data row16 col5" >0.400538</td>
+      <td id="T_18801_row16_col6" class="data row16 col6" >0.003006</td>
+      <td id="T_18801_row16_col7" class="data row16 col7" >0.668564</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row17" class="row_heading level0 row17" >Задняя правая дверь</th>
+      <td id="T_18801_row17_col0" class="data row17 col0" >0.075264</td>
+      <td id="T_18801_row17_col1" class="data row17 col1" >0.899665</td>
+      <td id="T_18801_row17_col2" class="data row17 col2" >0.007609</td>
+      <td id="T_18801_row17_col3" class="data row17 col3" >1.005509</td>
+      <td id="T_18801_row17_col4" class="data row17 col4" >0.078920</td>
+      <td id="T_18801_row17_col5" class="data row17 col5" >0.899111</td>
+      <td id="T_18801_row17_col6" class="data row17 col6" >0.002801</td>
+      <td id="T_18801_row17_col7" class="data row17 col7" >0.543564</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row18" class="row_heading level0 row18" >Передний бампер</th>
+      <td id="T_18801_row18_col0" class="data row18 col0" >0.169816</td>
+      <td id="T_18801_row18_col1" class="data row18 col1" >1.766335</td>
+      <td id="T_18801_row18_col2" class="data row18 col2" >0.013426</td>
+      <td id="T_18801_row18_col3" class="data row18 col3" >1.612037</td>
+      <td id="T_18801_row18_col4" class="data row18 col4" >0.178044</td>
+      <td id="T_18801_row18_col5" class="data row18 col5" >1.766739</td>
+      <td id="T_18801_row18_col6" class="data row18 col6" >0.005525</td>
+      <td id="T_18801_row18_col7" class="data row18 col7" >1.014098</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row19" class="row_heading level0 row19" >Задняя левая фара</th>
+      <td id="T_18801_row19_col0" class="data row19 col0" >0.011084</td>
+      <td id="T_18801_row19_col1" class="data row19 col1" >0.148281</td>
+      <td id="T_18801_row19_col2" class="data row19 col2" >0.000654</td>
+      <td id="T_18801_row19_col3" class="data row19 col3" >0.115538</td>
+      <td id="T_18801_row19_col4" class="data row19 col4" >0.011656</td>
+      <td id="T_18801_row19_col5" class="data row19 col5" >0.148385</td>
+      <td id="T_18801_row19_col6" class="data row19 col6" >0.001503</td>
+      <td id="T_18801_row19_col7" class="data row19 col7" >0.337290</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row20" class="row_heading level0 row20" >Задняя левая дверь</th>
+      <td id="T_18801_row20_col0" class="data row20 col0" >0.062695</td>
+      <td id="T_18801_row20_col1" class="data row20 col1" >0.767893</td>
+      <td id="T_18801_row20_col2" class="data row20 col2" >0.005473</td>
+      <td id="T_18801_row20_col3" class="data row20 col3" >0.786941</td>
+      <td id="T_18801_row20_col4" class="data row20 col4" >0.065789</td>
+      <td id="T_18801_row20_col5" class="data row20 col5" >0.767681</td>
+      <td id="T_18801_row20_col6" class="data row20 col6" >0.001503</td>
+      <td id="T_18801_row20_col7" class="data row20 col7" >0.337290</td>
+    </tr>
+    <tr>
+      <th id="T_18801_level0_row21" class="row_heading level0 row21" >Total</th>
+      <td id="T_18801_row21_col0" class="data row21 col0" >1.196609</td>
+      <td id="T_18801_row21_col1" class="data row21 col1" >14.058938</td>
+      <td id="T_18801_row21_col2" class="data row21 col2" >0.085056</td>
+      <td id="T_18801_row21_col3" class="data row21 col3" >11.632305</td>
+      <td id="T_18801_row21_col4" class="data row21 col4" >1.256082</td>
+      <td id="T_18801_row21_col5" class="data row21 col5" >14.064529</td>
+      <td id="T_18801_row21_col6" class="data row21 col6" >0.044517</td>
+      <td id="T_18801_row21_col7" class="data row21 col7" >9.028176</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[27]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_r2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_r2_all&#39;</span><span class="p">:</span> <span class="n">damage_manager</span><span class="o">.</span><span class="n">get_variance</span><span class="p">(</span><span class="n">dealer_df</span><span class="p">,</span> <span class="s1">&#39;actual_price&#39;</span><span class="p">),</span> <span class="s1">&#39;price_r2_damaged&#39;</span><span class="p">:</span> <span class="n">damage_manager</span><span class="o">.</span><span class="n">get_variance</span><span class="p">(</span><span class="n">dealer_df</span><span class="p">[</span><span class="n">dealer_df</span><span class="p">[</span><span class="n">damage_features</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)],</span> <span class="s1">&#39;actual_price&#39;</span><span class="p">)},</span> <span class="n">index</span><span class="o">=</span><span class="n">damage_features</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[28]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">damage_r2</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[28]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>price_r2_all</th>
+      <th>price_r2_damaged</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Передняя левая фара</th>
+      <td>9.092138e-06</td>
+      <td>0.001458</td>
+    </tr>
+    <tr>
+      <th>Передняя правая фара</th>
+      <td>8.625697e-08</td>
+      <td>0.001193</td>
+    </tr>
+    <tr>
+      <th>Правое зеркало</th>
+      <td>1.527829e-05</td>
+      <td>0.006077</td>
+    </tr>
+    <tr>
+      <th>Левое зеркало</th>
+      <td>2.078488e-05</td>
+      <td>0.004678</td>
+    </tr>
+    <tr>
+      <th>Капот</th>
+      <td>4.179459e-05</td>
+      <td>0.001694</td>
+    </tr>
+    <tr>
+      <th>Заднее правое крыло</th>
+      <td>1.265851e-04</td>
+      <td>0.020686</td>
+    </tr>
+    <tr>
+      <th>Заднее левое крыло</th>
+      <td>1.018716e-04</td>
+      <td>0.009266</td>
+    </tr>
+    <tr>
+      <th>Передняя левая дверь</th>
+      <td>1.012055e-04</td>
+      <td>0.017064</td>
+    </tr>
+    <tr>
+      <th>Крыша</th>
+      <td>2.669680e-06</td>
+      <td>0.002228</td>
+    </tr>
+    <tr>
+      <th>Переднее правое крыло</th>
+      <td>9.338772e-05</td>
+      <td>0.023766</td>
+    </tr>
+    <tr>
+      <th>Заднее стекло</th>
+      <td>0.000000e+00</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>Задний бампер</th>
+      <td>1.202304e-04</td>
+      <td>0.010876</td>
+    </tr>
+    <tr>
+      <th>Передняя правая дверь</th>
+      <td>9.663647e-05</td>
+      <td>0.016991</td>
+    </tr>
+    <tr>
+      <th>Задняя правая фара</th>
+      <td>1.800945e-05</td>
+      <td>0.005233</td>
+    </tr>
+    <tr>
+      <th>Дверь багажника</th>
+      <td>1.595842e-04</td>
+      <td>0.023274</td>
+    </tr>
+    <tr>
+      <th>Переднее левое крыло</th>
+      <td>7.629252e-05</td>
+      <td>0.008915</td>
+    </tr>
+    <tr>
+      <th>Лобовое стекло</th>
+      <td>2.038041e-05</td>
+      <td>0.039781</td>
+    </tr>
+    <tr>
+      <th>Задняя правая дверь</th>
+      <td>1.119348e-04</td>
+      <td>0.013143</td>
+    </tr>
+    <tr>
+      <th>Передний бампер</th>
+      <td>1.686870e-04</td>
+      <td>0.006089</td>
+    </tr>
+    <tr>
+      <th>Задняя левая фара</th>
+      <td>1.440320e-05</td>
+      <td>0.002430</td>
+    </tr>
+    <tr>
+      <th>Задняя левая дверь</th>
+      <td>8.322264e-05</td>
+      <td>0.029973</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[29]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">component_manager</span> <span class="o">=</span> <span class="n">MultiCatManager</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span><span class="p">,</span> <span class="n">component_features</span><span class="p">,</span> <span class="s1">&#39;component_features&#39;</span><span class="p">)</span>
+<span class="n">component_manager</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[30]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">component_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">component_features</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">df_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">component_stats</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">component_manager</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">temp_mask</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">damage_features</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">component_stats</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_damaged&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">component_manager</span><span class="o">.</span><span class="n">get_entropy</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">temp_mask</span><span class="p">])</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>train_df
+dealer_df
+advert_df
+test_df
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[31]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">component_stats</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">highlight_quantile</span><span class="p">(</span><span class="n">q_left</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[31]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<style type="text/css">
+#T_fadf3_row0_col1, #T_fadf3_row0_col3, #T_fadf3_row0_col5, #T_fadf3_row0_col7, #T_fadf3_row3_col0, #T_fadf3_row3_col1, #T_fadf3_row3_col2, #T_fadf3_row3_col3, #T_fadf3_row3_col4, #T_fadf3_row3_col5, #T_fadf3_row3_col6, #T_fadf3_row3_col7, #T_fadf3_row4_col0, #T_fadf3_row4_col2, #T_fadf3_row4_col4, #T_fadf3_row4_col6, #T_fadf3_row7_col0, #T_fadf3_row7_col1, #T_fadf3_row7_col2, #T_fadf3_row7_col3, #T_fadf3_row7_col4, #T_fadf3_row7_col5, #T_fadf3_row7_col6, #T_fadf3_row7_col7 {
+  background-color: yellow;
+}
+</style>
+<table id="T_fadf3">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_fadf3_level0_col0" class="col_heading level0 col0" >train_df</th>
+      <th id="T_fadf3_level0_col1" class="col_heading level0 col1" >train_df_damaged</th>
+      <th id="T_fadf3_level0_col2" class="col_heading level0 col2" >dealer_df</th>
+      <th id="T_fadf3_level0_col3" class="col_heading level0 col3" >dealer_df_damaged</th>
+      <th id="T_fadf3_level0_col4" class="col_heading level0 col4" >advert_df</th>
+      <th id="T_fadf3_level0_col5" class="col_heading level0 col5" >advert_df_damaged</th>
+      <th id="T_fadf3_level0_col6" class="col_heading level0 col6" >test_df</th>
+      <th id="T_fadf3_level0_col7" class="col_heading level0 col7" >test_df_damaged</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_fadf3_level0_row0" class="row_heading level0 row0" >aktivnaya_bezopasnost_mult</th>
+      <td id="T_fadf3_row0_col0" class="data row0 col0" >2.825830</td>
+      <td id="T_fadf3_row0_col1" class="data row0 col1" >3.337003</td>
+      <td id="T_fadf3_row0_col2" class="data row0 col2" >2.961743</td>
+      <td id="T_fadf3_row0_col3" class="data row0 col3" >3.760688</td>
+      <td id="T_fadf3_row0_col4" class="data row0 col4" >2.751993</td>
+      <td id="T_fadf3_row0_col5" class="data row0 col5" >3.334646</td>
+      <td id="T_fadf3_row0_col6" class="data row0 col6" >2.906914</td>
+      <td id="T_fadf3_row0_col7" class="data row0 col7" >2.852217</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row1" class="row_heading level0 row1" >electroprivod_mult</th>
+      <td id="T_fadf3_row1_col0" class="data row1 col0" >2.391848</td>
+      <td id="T_fadf3_row1_col1" class="data row1 col1" >2.763242</td>
+      <td id="T_fadf3_row1_col2" class="data row1 col2" >2.275960</td>
+      <td id="T_fadf3_row1_col3" class="data row1 col3" >2.777154</td>
+      <td id="T_fadf3_row1_col4" class="data row1 col4" >2.369098</td>
+      <td id="T_fadf3_row1_col5" class="data row1 col5" >2.762843</td>
+      <td id="T_fadf3_row1_col6" class="data row1 col6" >2.206989</td>
+      <td id="T_fadf3_row1_col7" class="data row1 col7" >2.233459</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row2" class="row_heading level0 row2" >fary_mult</th>
+      <td id="T_fadf3_row2_col0" class="data row2 col0" >1.771038</td>
+      <td id="T_fadf3_row2_col1" class="data row2 col1" >2.077451</td>
+      <td id="T_fadf3_row2_col2" class="data row2 col2" >1.957047</td>
+      <td id="T_fadf3_row2_col3" class="data row2 col3" >2.327145</td>
+      <td id="T_fadf3_row2_col4" class="data row2 col4" >1.755812</td>
+      <td id="T_fadf3_row2_col5" class="data row2 col5" >2.076435</td>
+      <td id="T_fadf3_row2_col6" class="data row2 col6" >1.881882</td>
+      <td id="T_fadf3_row2_col7" class="data row2 col7" >2.126614</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row3" class="row_heading level0 row3" >multimedia_navigacia_mult</th>
+      <td id="T_fadf3_row3_col0" class="data row3 col0" >4.896865</td>
+      <td id="T_fadf3_row3_col1" class="data row3 col1" >5.972472</td>
+      <td id="T_fadf3_row3_col2" class="data row3 col2" >5.385095</td>
+      <td id="T_fadf3_row3_col3" class="data row3 col3" >5.389691</td>
+      <td id="T_fadf3_row3_col4" class="data row3 col4" >4.782987</td>
+      <td id="T_fadf3_row3_col5" class="data row3 col5" >5.971687</td>
+      <td id="T_fadf3_row3_col6" class="data row3 col6" >5.222019</td>
+      <td id="T_fadf3_row3_col7" class="data row3 col7" >3.149397</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row4" class="row_heading level0 row4" >obogrev_mult</th>
+      <td id="T_fadf3_row4_col0" class="data row4 col0" >2.970971</td>
+      <td id="T_fadf3_row4_col1" class="data row4 col1" >3.084294</td>
+      <td id="T_fadf3_row4_col2" class="data row4 col2" >3.249685</td>
+      <td id="T_fadf3_row4_col3" class="data row4 col3" >3.155134</td>
+      <td id="T_fadf3_row4_col4" class="data row4 col4" >2.888634</td>
+      <td id="T_fadf3_row4_col5" class="data row4 col5" >3.083329</td>
+      <td id="T_fadf3_row4_col6" class="data row4 col6" >3.182895</td>
+      <td id="T_fadf3_row4_col7" class="data row4 col7" >2.382856</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row5" class="row_heading level0 row5" >pamyat_nastroek_mult</th>
+      <td id="T_fadf3_row5_col0" class="data row5 col0" >0.870748</td>
+      <td id="T_fadf3_row5_col1" class="data row5 col1" >1.037202</td>
+      <td id="T_fadf3_row5_col2" class="data row5 col2" >0.621476</td>
+      <td id="T_fadf3_row5_col3" class="data row5 col3" >1.285390</td>
+      <td id="T_fadf3_row5_col4" class="data row5 col4" >0.877477</td>
+      <td id="T_fadf3_row5_col5" class="data row5 col5" >1.036206</td>
+      <td id="T_fadf3_row5_col6" class="data row5 col6" >0.566578</td>
+      <td id="T_fadf3_row5_col7" class="data row5 col7" >1.186278</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row6" class="row_heading level0 row6" >podushki_bezopasnosti_mult</th>
+      <td id="T_fadf3_row6_col0" class="data row6 col0" >2.416713</td>
+      <td id="T_fadf3_row6_col1" class="data row6 col1" >2.788706</td>
+      <td id="T_fadf3_row6_col2" class="data row6 col2" >2.872493</td>
+      <td id="T_fadf3_row6_col3" class="data row6 col3" >2.937355</td>
+      <td id="T_fadf3_row6_col4" class="data row6 col4" >2.354997</td>
+      <td id="T_fadf3_row6_col5" class="data row6 col5" >2.787669</td>
+      <td id="T_fadf3_row6_col6" class="data row6 col6" >2.792477</td>
+      <td id="T_fadf3_row6_col7" class="data row6 col7" >2.108459</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row7" class="row_heading level0 row7" >pomosh_pri_vozhdenii_mult</th>
+      <td id="T_fadf3_row7_col0" class="data row7 col0" >3.717066</td>
+      <td id="T_fadf3_row7_col1" class="data row7 col1" >4.484917</td>
+      <td id="T_fadf3_row7_col2" class="data row7 col2" >4.924214</td>
+      <td id="T_fadf3_row7_col3" class="data row7 col3" >4.632834</td>
+      <td id="T_fadf3_row7_col4" class="data row7 col4" >3.616081</td>
+      <td id="T_fadf3_row7_col5" class="data row7 col5" >4.482821</td>
+      <td id="T_fadf3_row7_col6" class="data row7 col6" >4.926763</td>
+      <td id="T_fadf3_row7_col7" class="data row7 col7" >3.149397</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row8" class="row_heading level0 row8" >protivoygonnaya_sistema_mult</th>
+      <td id="T_fadf3_row8_col0" class="data row8 col0" >2.531291</td>
+      <td id="T_fadf3_row8_col1" class="data row8 col1" >2.880099</td>
+      <td id="T_fadf3_row8_col2" class="data row8 col2" >2.332128</td>
+      <td id="T_fadf3_row8_col3" class="data row8 col3" >3.027159</td>
+      <td id="T_fadf3_row8_col4" class="data row8 col4" >2.513304</td>
+      <td id="T_fadf3_row8_col5" class="data row8 col5" >2.879128</td>
+      <td id="T_fadf3_row8_col6" class="data row8 col6" >2.288181</td>
+      <td id="T_fadf3_row8_col7" class="data row8 col7" >2.430037</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row9" class="row_heading level0 row9" >salon_mult</th>
+      <td id="T_fadf3_row9_col0" class="data row9 col0" >1.351842</td>
+      <td id="T_fadf3_row9_col1" class="data row9 col1" >1.482928</td>
+      <td id="T_fadf3_row9_col2" class="data row9 col2" >1.223614</td>
+      <td id="T_fadf3_row9_col3" class="data row9 col3" >1.370277</td>
+      <td id="T_fadf3_row9_col4" class="data row9 col4" >1.358412</td>
+      <td id="T_fadf3_row9_col5" class="data row9 col5" >1.482963</td>
+      <td id="T_fadf3_row9_col6" class="data row9 col6" >1.175109</td>
+      <td id="T_fadf3_row9_col7" class="data row9 col7" >1.271782</td>
+    </tr>
+    <tr>
+      <th id="T_fadf3_level0_row10" class="row_heading level0 row10" >upravlenie_klimatom_mult</th>
+      <td id="T_fadf3_row10_col0" class="data row10 col0" >1.205801</td>
+      <td id="T_fadf3_row10_col1" class="data row10 col1" >1.458419</td>
+      <td id="T_fadf3_row10_col2" class="data row10 col2" >0.183190</td>
+      <td id="T_fadf3_row10_col3" class="data row10 col3" >1.650871</td>
+      <td id="T_fadf3_row10_col4" class="data row10 col4" >1.246952</td>
+      <td id="T_fadf3_row10_col5" class="data row10 col5" >1.457621</td>
+      <td id="T_fadf3_row10_col6" class="data row10 col6" >0.074637</td>
+      <td id="T_fadf3_row10_col7" class="data row10 col7" >1.530639</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[32]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">component_r2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;price_r2&#39;</span><span class="p">:</span> <span class="n">component_manager</span><span class="o">.</span><span class="n">get_variance</span><span class="p">(</span><span class="n">dealer_df</span><span class="p">,</span> <span class="s1">&#39;actual_price&#39;</span><span class="p">)},</span> <span class="n">index</span><span class="o">=</span><span class="n">component_features</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[33]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">component_r2</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[33]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>price_r2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>aktivnaya_bezopasnost_mult</th>
+      <td>0.169772</td>
+    </tr>
+    <tr>
+      <th>electroprivod_mult</th>
+      <td>0.273463</td>
+    </tr>
+    <tr>
+      <th>fary_mult</th>
+      <td>0.129816</td>
+    </tr>
+    <tr>
+      <th>multimedia_navigacia_mult</th>
+      <td>0.260520</td>
+    </tr>
+    <tr>
+      <th>obogrev_mult</th>
+      <td>0.182345</td>
+    </tr>
+    <tr>
+      <th>pamyat_nastroek_mult</th>
+      <td>0.216239</td>
+    </tr>
+    <tr>
+      <th>podushki_bezopasnosti_mult</th>
+      <td>0.145560</td>
+    </tr>
+    <tr>
+      <th>pomosh_pri_vozhdenii_mult</th>
+      <td>0.314791</td>
+    </tr>
+    <tr>
+      <th>protivoygonnaya_sistema_mult</th>
+      <td>0.019680</td>
+    </tr>
+    <tr>
+      <th>salon_mult</th>
+      <td>0.058965</td>
+    </tr>
+    <tr>
+      <th>upravlenie_klimatom_mult</th>
+      <td>0.002986</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[34]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_widget_html</span><span class="p">(</span><span class="s1">&#39;damage_features&#39;</span><span class="p">,</span> <span class="n">damage_features</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">dealer_df</span><span class="p">,</span> <span class="n">advert_df</span><span class="p">,</span> <span class="n">test_df</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
@@ -16022,9 +17073,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[21]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[34]:</div>
 
 
 
@@ -21196,12 +22249,12 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[35]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_widget_html</span><span class="p">(</span><span class="s1">&#39;component_features&#39;</span><span class="p">,</span> <span class="n">component_features</span><span class="p">,</span> <span class="n">train_df</span><span class="p">,</span> <span class="n">dealer_df</span><span class="p">,</span> <span class="n">advert_df</span><span class="p">,</span> <span class="n">test_df</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
@@ -21218,9 +22271,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[22]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[35]:</div>
 
 
 
@@ -41034,15 +42089,15 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[36]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_multicat_info</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="s1">&#39;protivoygonnaya_sistema_mult&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="s1">&#39;protivoygonnaya_sistema_mult&#39;</span><span class="p">,</span> <span class="n">dfs</span><span class="o">=</span><span class="p">[</span><span class="n">train_df</span><span class="p">,</span> <span class="n">dealer_df</span><span class="p">,</span> <span class="n">advert_df</span><span class="p">],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;train_df&#39;</span><span class="p">,</span> <span class="s1">&#39;dealer_df&#39;</span><span class="p">,</span> <span class="s1">&#39;advert_df&#39;</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">get_multicat_info</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="s1">&#39;protivoygonnaya_sistema_mult&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="s1">&#39;protivoygonnaya_sistema_mult&#39;</span><span class="p">,</span> <span class="n">dfs</span><span class="o">=</span><span class="n">df_list</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">df_names</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -41056,9 +42111,11 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[23]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[36]:</div>
 
 
 
@@ -41084,9 +42141,12 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <th colspan="2" halign="left">train_df</th>
       <th colspan="2" halign="left">dealer_df</th>
       <th colspan="2" halign="left">advert_df</th>
+      <th colspan="2" halign="left">test_df</th>
     </tr>
     <tr>
       <th></th>
+      <th>percentage</th>
+      <th>multi percentage</th>
       <th>percentage</th>
       <th>multi percentage</th>
       <th>percentage</th>
@@ -41104,6 +42164,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>34.0469</td>
       <td>6.5104</td>
       <td>37.4418</td>
+      <td>1.319</td>
+      <td>31.3599</td>
     </tr>
     <tr>
       <th>Центральный замок</th>
@@ -41113,6 +42175,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>73.0123</td>
       <td>9.6013</td>
       <td>47.2406</td>
+      <td>11.8712</td>
+      <td>71.6564</td>
     </tr>
     <tr>
       <th>Иммобилайзер</th>
@@ -41122,6 +42186,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>57.5639</td>
       <td>0.6239</td>
       <td>26.9942</td>
+      <td>1.1452</td>
+      <td>56.8916</td>
     </tr>
     <tr>
       <th>Спутник</th>
@@ -41131,6 +42197,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.3783</td>
       <td>0.1068</td>
       <td>4.7609</td>
+      <td>0.0204</td>
+      <td>0.1125</td>
     </tr>
     <tr>
       <th>None</th>
@@ -41140,6 +42208,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>23.9948</td>
       <td>44.5313</td>
       <td>44.5313</td>
+      <td>25.4703</td>
+      <td>25.4703</td>
     </tr>
     <tr>
       <th>Сигнализация, Центральный замок</th>
@@ -41149,6 +42219,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>32.1949</td>
       <td>11.3481</td>
       <td>29.9649</td>
+      <td>4.4172</td>
+      <td>29.6524</td>
     </tr>
     <tr>
       <th>Сигнализация, Иммобилайзер</th>
@@ -41158,6 +42230,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>27.9223</td>
       <td>0.6494</td>
       <td>18.8094</td>
+      <td>0.3885</td>
+      <td>25.6135</td>
     </tr>
     <tr>
       <th>Центральный замок, Иммобилайзер</th>
@@ -41167,6 +42241,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>55.9047</td>
       <td>7.3091</td>
       <td>25.6342</td>
+      <td>30.1329</td>
+      <td>55.3579</td>
     </tr>
     <tr>
       <th>Сигнализация, Спутник</th>
@@ -41176,6 +42252,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.339</td>
       <td>0.2509</td>
       <td>4.2682</td>
+      <td>0.0</td>
+      <td>0.092</td>
     </tr>
     <tr>
       <th>Центральный замок, Спутник</th>
@@ -41185,6 +42263,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.35</td>
       <td>0.1339</td>
       <td>4.3164</td>
+      <td>0.0</td>
+      <td>0.092</td>
     </tr>
     <tr>
       <th>Иммобилайзер, Спутник</th>
@@ -41194,6 +42274,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.3144</td>
       <td>0.0205</td>
       <td>3.7461</td>
+      <td>0.0</td>
+      <td>0.0818</td>
     </tr>
     <tr>
       <th>Сигнализация, Центральный замок, Иммобилайзер</th>
@@ -41203,6 +42285,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>27.3954</td>
       <td>14.6657</td>
       <td>18.0938</td>
+      <td>25.1431</td>
+      <td>25.2249</td>
     </tr>
     <tr>
       <th>Сигнализация, Центральный замок, Спутник</th>
@@ -41212,6 +42296,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.323</td>
       <td>0.5231</td>
       <td>3.9511</td>
+      <td>0.0102</td>
+      <td>0.092</td>
     </tr>
     <tr>
       <th>Сигнализация, Иммобилайзер, Спутник</th>
@@ -41221,6 +42307,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.2923</td>
       <td>0.0662</td>
       <td>3.4943</td>
+      <td>0.0</td>
+      <td>0.0818</td>
     </tr>
     <tr>
       <th>Центральный замок, Иммобилайзер, Спутник</th>
@@ -41230,6 +42318,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.3058</td>
       <td>0.2313</td>
       <td>3.6594</td>
+      <td>0.0</td>
+      <td>0.0818</td>
     </tr>
     <tr>
       <th>Сигнализация, Центральный замок, Иммобилайзер, Спутник</th>
@@ -41239,6 +42329,8 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
       <td>0.2874</td>
       <td>3.4281</td>
       <td>3.4281</td>
+      <td>0.0818</td>
+      <td>0.0818</td>
     </tr>
   </tbody>
 </table>
@@ -41251,12 +42343,12 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 
 </div>
 
-</div><div  class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[37]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># from dataprep.eda import plot, plot_correlation, plot_missing, plot_diff, create_report</span>
