@@ -6,6 +6,8 @@ data/*.csv
 env
 venv
 
+models/catboost_info
+
 __pycache__
 .ipynb_checkpoints
 
