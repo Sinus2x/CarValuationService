@@ -1,2 +1,2 @@
 task: sentiment-analysis
-model_path: "models/model_no_text"
+model_path: "experiments/model_no_text"

@@ -7,7 +7,7 @@ data/*.csv
 env
 venv
 
-models/catboost_info
+experiments/catboost_info
 
 __pycache__
 .ipynb_checkpoints
