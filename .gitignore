@@ -12,6 +12,6 @@ models/catboost_info
 notebooks/*.html
 
 __pycache__
-.ipynb_checkpointss
+.ipynb_checkpoints
 
 report_dealer_df.html
