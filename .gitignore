@@ -1,10 +1,15 @@
 data/*.f
 data/*.csv
 
+.idea
 .env
 .venv
 env
 venv
 
+models/catboost_info
+
 __pycache__
 .ipynb_checkpoints
+
+report_dealer_df.html
