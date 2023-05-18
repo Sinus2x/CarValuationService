@@ -7,12 +7,6 @@ model = None
 app = FastAPI()
 
 
-class SentimentResponse(BaseModel):
-    text: str
-    sentiment_label: str
-    sentiment_score: float
-
-
 # create a route
 @app.get("/")
 def index():
