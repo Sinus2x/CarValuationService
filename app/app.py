@@ -10,7 +10,7 @@ app = FastAPI()
 # create a route
 @app.get("/")
 def index():
-    return {"text": "Sentiment Analysis"}
+    return {"text": "Welcome to Car Valuation Service!"}
 
 
 # Register the function to run during startup

@@ -6,7 +6,7 @@ RUN pip install -r requirements.txt
 
 COPY app/ ./app/
 COPY ml/ ./ml/
-COPY data/weights/model_no_text ./data/weights/
+COPY data/weights/model ./data/weights/
 
 
 CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8080"]
