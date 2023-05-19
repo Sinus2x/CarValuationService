@@ -5,7 +5,6 @@ from catboost import CatBoostRegressor
 from ml.utils import feature_transform
 import yaml
 import warnings
-from datatypes import Car
 
 
 # load config file
@@ -42,26 +41,26 @@ class MedianAPE:
 class Model:
     def __init__(self):
         self.cat_features = [
-        'brand', 'model', 'generation',
-        'body_type', 'drive_type', 'transmission_type', 'engine_type',
-        'color', 'pts', 'owners_count', 'city',
-        'generation_years'
+        "brand", "model", "generation",
+        "body_type", "drive_type", "transmission_type", "engine_type",
+        "color", "pts", "owners_count", "city",
+        "generation_years"
     ]
 
         self.num_features = [
-            'doors_number',
-            'year',
-            'mileage',
-            'horse_power',
-            'month',
-            'mileage_per_year',
-            'base_price',
-            'restyling',
-            'engine_volume',
+            "doors_number",
+            "year",
+            "mileage",
+            "horse_power",
+            "month",
+            "mileage_per_year",
+            "base_price",
+            "restyling",
+            "engine_volume",
         ]
 
-        self.emb_features = ['desc_embs', 'mod_embs', 'eq_embs', 'tfidf_embs']
-        self.text_features = ['lemmatized_description', 'brand_model_gen_res_mod', 'modification', 'equipment', ]
+        self.emb_features = ["desc_embs", "mod_embs", "eq_embs", "tfidf_embs"]
+        self.text_features = ["lemmatized_description", "brand_model_gen_res_mod", "modification", "equipment", ]
         self.params = dict(
             cat_features=self.cat_features,
             text_features=self.text_features,
@@ -72,16 +71,16 @@ class Model:
             colsample_bylevel=1.,
             max_bin=80,
             bagging_temperature=2,
-            loss_function='MAE',
+            loss_function="MAE",
             use_best_model=True,
             verbose=500,
-            grow_policy='Depthwise',
+            grow_policy="Depthwise",
             has_time=True,
             random_seed=42,
             eval_metric=MedianAPE(),
     )
         self.model = CatBoostRegressor(**self.params)
-        path = Path(__file__).parent.parent / config['model_path']
+        path = Path(__file__).parent.parent / config["model_path"]
         self.model.load_model(path)
 
     def predict(self, x: dict) -> float:
@@ -93,31 +92,30 @@ class Model:
 
 
 if __name__ == "__main__":
-    warnings.simplefilter('ignore')
+    warnings.simplefilter("ignore")
 
     debug_model = Model()
     debug_car = {
-        'sale_end_date': '2023-02-10 00:00:00',
-        'brand': 'Toyota',
-        'model': 'Land Cruiser Prado',
-        'generation': '150 рестайлинг (2013—2017)',
-        'modification': '2.8 D AT (177 л.с.)',
-        'equipment': None,
-        'body_type': 'Внедорожник',
-        'drive_type': 'Полный',
-        'transmission_type': 'Автомат',
-        'engine_type': 'Дизель',
-        'doors_number': 5,
-        'color': 'Чёрный',
-        'pts': 'Дубликат',
-        'year': 2015,
-        'mileage': 260222,
-        'owners_count': '3',
-        'steering_wheel': 'Левый',
-        'latitude': 59.939095,
-        'longitude': 30.315868,
-        'description': '✔ 3 ВЛАДЕЛЬЦА ПО ПТС \n✔ В РОДНОМ ОКРАСЕ\n✔ ИДЕАЛЬНОЕ ВНЕШНЕЕ СОСТОЯНИЕ\n✔ ИДЕАЛЬНОЕ ТЕХНИЧЕСКОЕ СОСТОЯНИЕ\n✔ ПОЛНОСТЬЮ ОБСЛУЖЕННЫЙ\n✔ ОБСЛУЖИВАНИЕ У ОФ. ДИЛЕРА\n✔ НЕ ТРУБУЕТ ВЛОЖЕНИЙ \n✔ KDSS ОБСЛУЖЕН\n✔ МАКСИМАЛЬНАЯ КОМПЛЕКТАЦИЯ ЛЮКС (5 МЕСТ)\n\nПродавец – крупнейший официальный дилер TOYOTA & LEXUS в Санкт-Петербурге. Более 400 а/м в наличии. 📌Кредит по двум документам 📌Одобрение кредита за 1 час и выдача автомобиля день в день 📌 Рассмотрение в 10 банках партнерах 📌 Лучшие тарифы КАСКО, ОСАГО, ГТО Все автомобили с пробегом доступны к просмотру ежедневно с 9:00, до 21:00\nОсмотреть автомобиль можно по адресу: Санкт-Петербург, Виллозское городское поселение, д. 3, строение 1\n\nМесто осмотра\n\nОсмотреть автомобиль можно по адресу: Санкт-Петербург, Виллозское городское поселение, д. 3, строение 1',
-    }
+        "brand": "Toyota",
+        "model": "Land Cruiser Prado",
+        "sale_end_date": "2023-02-10 00:00:00",
+        "description": "✔ 3 ВЛАДЕЛЬЦА ПО ПТС \n✔ В РОДНОМ ОКРАСЕ\n✔ ИДЕАЛЬНОЕ ВНЕШНЕЕ СОСТОЯНИЕ\n✔ ИДЕАЛЬНОЕ ТЕХНИЧЕСКОЕ СОСТОЯНИЕ\n✔ ПОЛНОСТЬЮ ОБСЛУЖЕННЫЙ\n✔ ОБСЛУЖИВАНИЕ У ОФ. ДИЛЕРА\n✔ НЕ ТРУБУЕТ ВЛОЖЕНИЙ \n✔ KDSS ОБСЛУЖЕН\n✔ МАКСИМАЛЬНАЯ КОМПЛЕКТАЦИЯ ЛЮКС (5 МЕСТ)\n\nПродавец – крупнейший официальный дилер TOYOTA & LEXUS в Санкт-Петербурге. Более 400 а/м в наличии. 📌Кредит по двум документам 📌Одобрение кредита за 1 час и выдача автомобиля день в день 📌 Рассмотрение в 10 банках партнерах 📌 Лучшие тарифы КАСКО, ОСАГО, ГТО Все автомобили с пробегом доступны к просмотру ежедневно с 9:00, до 21:00\nОсмотреть автомобиль можно по адресу: Санкт-Петербург, Виллозское городское поселение, д. 3, строение 1\n\nМесто осмотра\n\nОсмотреть автомобиль можно по адресу: Санкт-Петербург, Виллозское городское поселение, д. 3, строение 1",
+        "year": 2015,
+        "generation": "150 рестайлинг (2013—2017)",
+        "body_type": "Внедорожник",
+        "equipment": None,
+        "modification": "2.8 D AT (177 л.с.)",
+        "drive_type": "Полный",
+        "transmission_type": "Автомат",
+        "engine_type": "Дизель",
+        "doors_number": 5,
+        "color": "Чёрный",
+        "pts": "Дубликат",
+        "owners_count": "3",
+        "mileage": 260222,
+        "latitude": 59.939095,
+        "longitude": 30.315868,
+        }
 
     #debug_car = pd.Series(debug_car).to_frame().T
     #debug_car = feature_transform(debug_car)

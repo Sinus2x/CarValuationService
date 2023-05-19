@@ -2,8 +2,7 @@ import numpy as np
 import pandas as pd
 from typing import List
 from sklearn.base import BaseEstimator
-from sklearn.linear_model import LinearRegression, QuantileRegressor
-from sklearn.isotonic import IsotonicRegression
+from sklearn.linear_model import LinearRegression
 
 import catboost as cb
 

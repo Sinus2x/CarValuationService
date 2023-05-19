@@ -3,6 +3,7 @@ import pydantic.fields
 from pydantic import BaseModel
 from datetime import datetime
 import typing
+from typing import Optional
 
 
 class Car(BaseModel):
@@ -13,7 +14,7 @@ class Car(BaseModel):
     year: int
     generation: str
     body_type: str
-    equipment: str
+    equipment: Optional[str] = None
     modification: str
     drive_type: str
     transmission_type: str
