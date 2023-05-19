@@ -1,7 +1,7 @@
 import pandas as pd
 import reverse_geocode
 from pathlib import Path
-from base_price import BasePrice
+from ml.base_price import BasePrice
 import pickle
 
 

@@ -1,7 +1,7 @@
 import pandas as pd
-from nan_fill import fill_na_transform
-from add_features import features_extract
-from add_text_features import text_features_extract
+from ml.nan_fill import fill_na_transform
+from ml.add_features import features_extract
+from ml.add_text_features import text_features_extract
 
 
 def feature_transform(car: pd.DataFrame) -> pd.DataFrame:

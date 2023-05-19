@@ -6,7 +6,7 @@ from gensim.models.word2vec import Word2Vec
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction import text
-from description_lemmatization import lemmatize_description
+from ml.description_lemmatization import lemmatize_description
 from gensim.models import KeyedVectors
 from pathlib import Path
 
