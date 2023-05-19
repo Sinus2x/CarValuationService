@@ -3,6 +3,7 @@ import reverse_geocode
 from pathlib import Path
 from ml.base_price import BasePrice
 import pickle
+import sys
 
 
 def get_city(df: pd.DataFrame, drop_coord_cols: bool = True) -> pd.DataFrame:
@@ -87,6 +88,7 @@ def get_base_price(df: pd.DataFrame) -> pd.DataFrame:
     weights_save_path = "data/weights/base_price_grouper_weights.pkl"
     path = Path(__file__).parent.parent / weights_save_path
 
+    sys.path.append("/ml")
     with open(path, 'rb') as f:
         base_price_grouper = pickle.load(f)
 

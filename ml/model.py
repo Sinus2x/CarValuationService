@@ -114,7 +114,7 @@ if __name__ == "__main__":
         "owners_count": "3",
         "mileage": 260222,
         "latitude": 59.939095,
-        "longitude": 30.315868,
+        "longitude": 30.315868
         }
 
     #debug_car = pd.Series(debug_car).to_frame().T

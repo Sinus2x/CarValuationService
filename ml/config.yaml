@@ -1,3 +1,3 @@
-task: sentiment-analysis
+task: car-valuation-service
 model_path: "data/weights/model"
 weights_dir_path: "data/weights"
