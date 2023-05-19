@@ -1,9 +1,5 @@
 import pandas as pd
 import reverse_geocode
-from pathlib import Path
-from ml.base_price import BasePrice
-import pickle
-import sys
 
 
 def get_city(df: pd.DataFrame, drop_coord_cols: bool = True) -> pd.DataFrame:
@@ -78,25 +74,14 @@ def get_concat_feature(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_base_price(df: pd.DataFrame) -> pd.DataFrame:
+def get_base_price(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     base_price_grouper_cols = ['brand', 'model', 'generation', 'modification']
-    base_price_grouper = BasePrice(
-        grouping_features=base_price_grouper_cols,
-        target_feature='price'
-    )
-
-    weights_save_path = "data/weights/base_price_grouper_weights.pkl"
-    path = Path(__file__).parent.parent / weights_save_path
-
-    sys.path.append("/ml")
-    with open(path, 'rb') as f:
-        base_price_grouper = pickle.load(f)
-
+    base_price_grouper = models_dict['base_price_grouper']
     df['base_price'] = base_price_grouper.predict(df[base_price_grouper_cols])
     return df
 
 
-def features_extract(df: pd.DataFrame) -> pd.DataFrame:
+def features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     # city, month, horsepower,
     # engine volume, generation,
     # restyling, mileage per year
@@ -108,7 +93,7 @@ def features_extract(df: pd.DataFrame) -> pd.DataFrame:
     df = get_generation_restyling(df)
     df = get_mileage_per_year(df)
     df = get_concat_feature(df)
-    df = get_base_price(df)
+    df = get_base_price(df, models_dict)
     return df
 
 

@@ -1,11 +1,7 @@
 import pandas as pd
 import numpy as np
-import pickle
-from gensim.models.word2vec import Word2Vec
 from sklearn.base import BaseEstimator, TransformerMixin
 from ml.description_lemmatization import lemmatize_description
-from gensim.models import KeyedVectors
-from pathlib import Path
 
 
 class Word2VecTransformer(BaseEstimator, TransformerMixin):
@@ -43,14 +39,11 @@ def cols_to_list(row, cols):
     return lst
 
 
-def description_w2v_extract(df: pd.DataFrame) -> pd.DataFrame:
+def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     df = lemmatize_description(df)
 
-    model_save_path = Path(__file__).parent.parent / 'data/weights/desc_w2v_model'
-    word_vectors_save_path = Path(__file__).parent.parent / 'data/weights/desc_w2v_word_vectors'
-
-    w2v_model = Word2Vec.load(str(model_save_path))
-    w2v_model.wv = KeyedVectors.load(str(word_vectors_save_path), mmap='r')
+    w2v_model = models_dict['w2v_model']
+    w2v_model.wv = models_dict['w2v_model_wv']
 
     desc2vec = Word2VecTransformer(w2v_model=w2v_model)
     w2v_desc_transform = desc2vec.transform(df.lemmatized_description.values)
@@ -60,12 +53,8 @@ def description_w2v_extract(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def description_tfidf_extract(df: pd.DataFrame) -> pd.DataFrame:
-    model_save_path = Path(__file__).parent.parent / 'data/weights/desc_tfidf_model.pkl'
-
-    with open(model_save_path, 'rb') as f:
-        tfidf = pickle.load(f)
-
+def description_tfidf_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+    tfidf = models_dict['tfidf']
     tfidf_df = tfidf.transform(df.lemmatized_description.astype(str).values)
     tfidf_embs_df = pd.DataFrame()
     cols = ['tfidf_sum', 'tfidf_max', 'tfidf_mean']
@@ -76,13 +65,9 @@ def description_tfidf_extract(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def equipment_w2v_extract(df: pd.DataFrame) -> pd.DataFrame:
-    model_save_path = Path(__file__).parent.parent / 'data/weights/equip_w2v_model'
-    word_vectors_save_path = Path(__file__).parent.parent / 'data/weights/equip_w2v_word_vectors'
-
-    equipment_w2v_model = Word2Vec.load(str(model_save_path))
-    equipment_w2v_model.wv = KeyedVectors.load(str(word_vectors_save_path), mmap='r')
-
+def equipment_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+    equipment_w2v_model = models_dict['eq_w2v_model']
+    equipment_w2v_model.wv = models_dict['eq_w2v_model_wv']
     equip_w2v_transformer = Word2VecTransformer(w2v_model=equipment_w2v_model)
     equipment_w2v_df = equip_w2v_transformer.transform(df.equipment.values)
     cols = [f'eq_w2v_{i}' for i in range(1, 6)]
@@ -91,13 +76,9 @@ def equipment_w2v_extract(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def modification_w2v_extract(df: pd.DataFrame) -> pd.DataFrame:
-    model_save_path = Path(__file__).parent.parent / 'data/weights/modification_w2v_model'
-    word_vectors_save_path = Path(__file__).parent.parent / 'data/weights/modification_w2v_word_vectors'
-
-    modification_w2v_model = Word2Vec.load(str(model_save_path))
-    modification_w2v_model.wv = KeyedVectors.load(str(word_vectors_save_path), mmap='r')
-
+def modification_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+    modification_w2v_model = models_dict['mod_w2v_model']
+    modification_w2v_model.wv = models_dict['mod_w2v_model_wv']
     modification_w2v_transformer = Word2VecTransformer(w2v_model=modification_w2v_model)
     modification_w2v_df = modification_w2v_transformer.transform(df.modification.values)
     cols = [f'mod_w2v_{i}' for i in range(1, 6)]
@@ -106,15 +87,15 @@ def modification_w2v_extract(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def text_features_extract(df: pd.DataFrame) -> pd.DataFrame:
+def text_features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     # description w2v
-    df = description_w2v_extract(df)
+    df = description_w2v_extract(df, models_dict)
     # description tf-idf
-    df = description_tfidf_extract(df)
+    df = description_tfidf_extract(df, models_dict)
     # equipment w2v
-    df = equipment_w2v_extract(df)
+    df = equipment_w2v_extract(df, models_dict)
     # modification w2v
-    df = modification_w2v_extract(df)
+    df = modification_w2v_extract(df, models_dict)
     return df
 
 

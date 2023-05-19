@@ -1,7 +1,4 @@
 import pandas as pd
-import os
-import numpy as np
-from pathlib import Path
 
 
 def equipment_typos_transform(equipment: str) -> str:
@@ -21,7 +18,7 @@ def equipment_typos_transform(equipment: str) -> str:
     return typos_dict.get(equipment, equipment).lower()
 
 
-def fill_equipment(df: pd.DataFrame) -> pd.DataFrame:
+def fill_equipment(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     def equipment_mode_transform(row, modes_dict):
         if row['equipment'] == 'none':
             return modes_dict.get(
@@ -33,19 +30,18 @@ def fill_equipment(df: pd.DataFrame) -> pd.DataFrame:
     df.equipment = df.equipment.fillna('none').apply(
         lambda x: equipment_typos_transform(x)
     )
-    modes_path = "data/weights/equipment_modes.csv"
-    path = Path(__file__).parent.parent / modes_path
-    equipment_modes = pd.read_csv(path)
+
+    equipment_modes = models_dict['equipment_modes']
     df['equipment'] = df.apply(
         lambda x: equipment_mode_transform(x, equipment_modes), axis=1
     )
     return df
 
 
-def fill_na_transform(df: pd.DataFrame) -> pd.DataFrame:
+def fill_na_transform(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     df.description = df.description.fillna('placeholder text')
     df.pts = df.pts.fillna('неизвестно')
-    df = fill_equipment(df)
+    df = fill_equipment(df, models_dict)
     return df
 
 

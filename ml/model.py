@@ -39,13 +39,13 @@ class MedianAPE:
 
 
 class Model:
-    def __init__(self):
+    def __init__(self, models_dict):
         self.cat_features = [
-        "brand", "model", "generation",
-        "body_type", "drive_type", "transmission_type", "engine_type",
-        "color", "pts", "owners_count", "city",
-        "generation_years"
-    ]
+            "brand", "model", "generation",
+            "body_type", "drive_type", "transmission_type", "engine_type",
+            "color", "pts", "owners_count", "city",
+            "generation_years"
+        ]
 
         self.num_features = [
             "doors_number",
@@ -78,14 +78,15 @@ class Model:
             has_time=True,
             random_seed=42,
             eval_metric=MedianAPE(),
-    )
+        )
+        self.models_dict = models_dict
         self.model = CatBoostRegressor(**self.params)
         path = Path(__file__).parent.parent / config["model_path"]
         self.model.load_model(path)
 
     def predict(self, x: dict) -> float:
         x = pd.Series(x).to_frame().T
-        x = feature_transform(x)
+        x = feature_transform(x, self.models_dict)
         col_order = self.model.feature_names_  # catboost requires same order of cols
         preds = self.model.predict(x[col_order])
         return preds
@@ -94,7 +95,7 @@ class Model:
 if __name__ == "__main__":
     warnings.simplefilter("ignore")
 
-    debug_model = Model()
+    debug_model = Model(models_dict={})
     debug_car = {
         "brand": "Toyota",
         "model": "Land Cruiser Prado",
