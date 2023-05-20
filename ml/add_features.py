@@ -103,23 +103,4 @@ def features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    """from pathlib import Path
-    car = {
-    "brand": "Porsche",
-    "model": "Cayenne",
-    "generation": "III (2017—2023)",
-    "modification": "3.0 4WD AT (340 л.с.)",
-    }
-
-    car = pd.Series(car).to_frame().T
-
-    weights_save_path = "data/weights/base_price_grouper.csv"
-    path = Path(__file__).parent.parent / weights_save_path
-    base_price_grouper = pd.read_csv(path)
-
-    features_models_dict = {
-        "base_price_grouper": base_price_grouper,}
-
-    car = get_base_price(car, features_models_dict)
-    print(car)"""
     pass

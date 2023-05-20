@@ -75,3 +75,7 @@ def startup_event():
 def predict(x: Car):
     pred = model.predict(x.dict())
     return int(pred)
+
+
+if __name__ == "__main__":
+    pass
