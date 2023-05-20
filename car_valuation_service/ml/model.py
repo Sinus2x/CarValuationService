@@ -84,9 +84,9 @@ class Model:
         path = Path(__file__).parent.parent / config["model_path"]
         self.model.load_model(path)
 
-    def predict(self, x: dict) -> float:
+    async def predict(self, x: dict) -> float:
         x = pd.Series(x).to_frame().T
-        x = feature_transform(x, self.models_dict)
+        x = await feature_transform(x, self.models_dict)
         col_order = self.model.feature_names_  # catboost requires same order of cols
         preds = self.model.predict(x[col_order])
         return preds

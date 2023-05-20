@@ -39,8 +39,8 @@ def cols_to_list(row, cols):
     return lst
 
 
-def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
-    df = lemmatize_description(df)
+async def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+    df = await lemmatize_description(df)
 
     w2v_model = models_dict['w2v_model']
     w2v_model.wv = models_dict['w2v_model_wv']
@@ -53,7 +53,7 @@ def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame
     return df
 
 
-def description_tfidf_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+async def description_tfidf_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     tfidf = models_dict['tfidf']
     tfidf_df = tfidf.transform(df.lemmatized_description.astype(str).values)
     tfidf_embs_df = pd.DataFrame()
@@ -65,7 +65,7 @@ def description_tfidf_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFra
     return df
 
 
-def equipment_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+async def equipment_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     equipment_w2v_model = models_dict['eq_w2v_model']
     equipment_w2v_model.wv = models_dict['eq_w2v_model_wv']
     equip_w2v_transformer = Word2VecTransformer(w2v_model=equipment_w2v_model)
@@ -76,7 +76,7 @@ def equipment_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     return df
 
 
-def modification_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+async def modification_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     modification_w2v_model = models_dict['mod_w2v_model']
     modification_w2v_model.wv = models_dict['mod_w2v_model_wv']
     modification_w2v_transformer = Word2VecTransformer(w2v_model=modification_w2v_model)
@@ -87,15 +87,15 @@ def modification_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFram
     return df
 
 
-def text_features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+async def text_features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     # description w2v
-    df = description_w2v_extract(df, models_dict)
+    df = await description_w2v_extract(df, models_dict)
     # description tf-idf
-    df = description_tfidf_extract(df, models_dict)
+    df = await description_tfidf_extract(df, models_dict)
     # equipment w2v
-    df = equipment_w2v_extract(df, models_dict)
+    df = await equipment_w2v_extract(df, models_dict)
     # modification w2v
-    df = modification_w2v_extract(df, models_dict)
+    df = await modification_w2v_extract(df, models_dict)
     return df
 
 

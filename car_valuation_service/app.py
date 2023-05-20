@@ -38,9 +38,9 @@ def startup_event():
 
 
 @app.post("/predict")
-def predict(x: Car):
+async def predict(x: Car):
     time_start = time.perf_counter()
-    pred = model.predict(x.dict())
+    pred = await model.predict(x.dict())
     time_end = time.perf_counter()
     statsd.timing(f'predict_price.timing.inference_time', time_end - time_start)
     statsd.incr(f'predict_price.request_status.success.count')

@@ -1,5 +1,3 @@
-import pandas as pd
-import pydantic.fields
 from pydantic import BaseModel
 from datetime import datetime
 import typing
