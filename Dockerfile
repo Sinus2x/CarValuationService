@@ -9,7 +9,7 @@ COPY ml/ ./ml/
 
 COPY data/weights/model ./data/weights/
 
-COPY data/weights/base_price_grouper_weights.pkl ./data/weights/
+COPY data/weights/base_price_grouper.csv ./data/weights/
 COPY data/weights/desc_tfidf_model.pkl ./data/weights/
 COPY data/weights/desc_w2v_model ./data/weights/
 COPY data/weights/desc_w2v_word_vectors ./data/weights/
