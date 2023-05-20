@@ -75,9 +75,15 @@ def get_concat_feature(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_base_price(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
-    base_price_grouper_cols = ['brand', 'model', 'generation', 'modification']
+    def base_price_transform(row, grouper_dict):
+        return grouper_dict.get(
+            (row['brand'], row['model'], row['generation'], row['modification'])
+        )
+
     base_price_grouper = models_dict['base_price_grouper']
-    df['base_price'] = base_price_grouper.predict(df[base_price_grouper_cols])
+    df['base_price'] = df.apply(
+        lambda x: base_price_transform(x, base_price_grouper), axis=1
+    )
     return df
 
 

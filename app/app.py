@@ -5,14 +5,11 @@ from gensim.models.word2vec import Word2Vec
 from gensim.models import KeyedVectors
 from pathlib import Path
 import pandas as pd
-import sys
 import pickle
 
 model = None
 features_models_dict = None
 app = FastAPI()
-
-sys.path.append("/ml")
 
 
 # create a route
@@ -32,10 +29,9 @@ def startup_event():
     equipment_modes = pd.read_csv(path)
 
     # base_price_grouper
-    weights_save_path = "data/weights/base_price_grouper_weights.pkl"
+    weights_save_path = "data/weights/base_price_grouper.csv"
     path = Path(__file__).parent.parent / weights_save_path
-    with open(path, 'rb') as f:
-        base_price_grouper = pickle.load(f)
+    base_price_grouper = pd.read_csv(path)
 
     # desc w2v
     model_save_path = Path(__file__).parent.parent / 'data/weights/desc_w2v_model'

@@ -1,0 +1,21 @@
+{
+        "brand": "Toyota",
+        "model": "Land Cruiser Prado",
+        "sale_end_date": "2023-02-10 00:00:00",
+        "description": "на ходу, продаю срочно нужны деньги",
+        "year": 2015,
+"equipment": "Sport",
+        "generation": "150 рестайлинг (2013—2017)",
+        "body_type": "Внедорожник",
+        "modification": "2.8 D AT (177 л.с.)",
+        "drive_type": "Полный",
+        "transmission_type": "Автомат",
+        "engine_type": "Газ",
+        "doors_number": 5,
+        "color": "Чёрный",
+        "pts": "Дубликат",
+        "owners_count": "3",
+        "mileage": 260222,
+        "latitude": 59.939095,
+        "longitude": 30.315868
+}
