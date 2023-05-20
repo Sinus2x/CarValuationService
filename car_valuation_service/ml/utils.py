@@ -11,7 +11,7 @@ async def feature_transform(car: pd.DataFrame, models_dict: dict) -> pd.DataFram
     # Types
     car.sale_end_date = pd.to_datetime(car.sale_end_date)
     # Fill nan
-    car = await fill_na_transform(car, models_dict)
+    car = fill_na_transform(car, models_dict)
 
     # New features extract
     car = await features_extract(car, models_dict)

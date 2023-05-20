@@ -18,7 +18,7 @@ def equipment_typos_transform(equipment: str) -> str:
     return typos_dict.get(equipment, equipment).lower()
 
 
-async def fill_equipment(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def fill_equipment(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     def equipment_mode_transform(row, modes_dict):
         if row['equipment'] == 'none':
             return modes_dict.get(
@@ -38,10 +38,10 @@ async def fill_equipment(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     return df
 
 
-async def fill_na_transform(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def fill_na_transform(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     df.description = df.description.fillna('placeholder text')
     df.pts = df.pts.fillna('неизвестно')
-    df = await fill_equipment(df, models_dict)
+    df = fill_equipment(df, models_dict)
     return df
 
 

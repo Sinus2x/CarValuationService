@@ -2,7 +2,7 @@ import pandas as pd
 import reverse_geocode
 
 
-async def get_city(df: pd.DataFrame, drop_coord_cols: bool = True) -> pd.DataFrame:
+def get_city(df: pd.DataFrame, drop_coord_cols: bool = True) -> pd.DataFrame:
     cities = reverse_geocode.search(df[['latitude', 'longitude']].values)
     df['city'] = [i['city'] for i in cities]
     if drop_coord_cols:
@@ -10,7 +10,7 @@ async def get_city(df: pd.DataFrame, drop_coord_cols: bool = True) -> pd.DataFra
     return df
 
 
-async def get_month(df: pd.DataFrame) -> pd.DataFrame:
+def get_month(df: pd.DataFrame) -> pd.DataFrame:
     def month_extract(row):
         if row['sale_end_date'] is pd.NaT:
             return row['close_date'].month
@@ -20,7 +20,7 @@ async def get_month(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-async def get_horse_power(df: pd.DataFrame) -> pd.DataFrame:
+def get_horse_power(df: pd.DataFrame) -> pd.DataFrame:
     hp_df = df.modification.str.extract(r'(?P<horse_power>\(.*\))')
     horse_power = hp_df.horse_power.str.strip('( л.с.)').fillna('382')
     horse_power = horse_power.astype(int)
@@ -28,7 +28,7 @@ async def get_horse_power(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-async def get_engine_volume(df: pd.DataFrame) -> pd.DataFrame:
+def get_engine_volume(df: pd.DataFrame) -> pd.DataFrame:
     tmp_df = df[['modification', 'model']]
     tmp_df['engine_volume'] = tmp_df.modification.str.extract(r'(?P<engine_volume>\d\.\d)')
     tmp_df.loc[tmp_df['modification'] == 'FX30d 4WD AT (238 л.с.)', 'engine_volume'] = '3.0'
@@ -38,7 +38,7 @@ async def get_engine_volume(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-async def get_generation_restyling(df: pd.DataFrame) -> pd.DataFrame:
+def get_generation_restyling(df: pd.DataFrame) -> pd.DataFrame:
     def restyling_extract(gen_list: list) -> int:
         """
         Выделяем поколение рестайлинга из списка слов колонки generation
@@ -56,7 +56,7 @@ async def get_generation_restyling(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-async def get_mileage_per_year(df: pd.DataFrame) -> pd.DataFrame:
+def get_mileage_per_year(df: pd.DataFrame) -> pd.DataFrame:
     df['mileage_per_year'] = df.mileage / (
             df.year.max() +
             (
@@ -66,7 +66,7 @@ async def get_mileage_per_year(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-async def get_concat_feature(df: pd.DataFrame) -> pd.DataFrame:
+def get_concat_feature(df: pd.DataFrame) -> pd.DataFrame:
     df['brand_model_gen_res_mod'] = df.brand + ' ' + \
                                     df.model + ' ' + \
                                     df.generation + ' ' + \
@@ -74,7 +74,7 @@ async def get_concat_feature(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-async def get_base_price(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def get_base_price(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     def predict_base_price(X, price_grouped):
         result = X.merge(price_grouped, how='left')
         y_pred = result['base_price'].values
@@ -91,14 +91,14 @@ async def features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     # engine volume, generation,
     # restyling, mileage per year
     # concat_feature, base price
-    df = await get_city(df)
-    df = await get_month(df)
-    df = await get_horse_power(df)
-    df = await get_engine_volume(df)
-    df = await get_generation_restyling(df)
-    df = await get_mileage_per_year(df)
-    df = await get_concat_feature(df)
-    df = await get_base_price(df, models_dict)
+    df = get_city(df)
+    df = get_month(df)
+    df = get_horse_power(df)
+    df = get_engine_volume(df)
+    df = get_generation_restyling(df)
+    df = get_mileage_per_year(df)
+    df = get_concat_feature(df)
+    df = get_base_price(df, models_dict)
     return df
 
 

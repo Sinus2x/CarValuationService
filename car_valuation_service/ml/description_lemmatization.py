@@ -3,7 +3,7 @@ import re
 from pymystem3 import Mystem
 
 
-async def preprocess_text(text):
+def preprocess_text(text):
     text = re.findall('[^\W_]+', text)
     text = [token.lower() for token in text if len(token) > 1]
     text = " ".join(text)
@@ -12,13 +12,13 @@ async def preprocess_text(text):
     return text
 
 
-async def lemmatize(text):
+def lemmatize(text):
     m = Mystem()
     lemmas = m.lemmatize(text)
     return ''.join(lemmas)
 
 
-async def lemmatize_description(df: pd.DataFrame) -> pd.DataFrame:
+def lemmatize_description(df: pd.DataFrame) -> pd.DataFrame:
     df['description'] = df.description.apply(preprocess_text)
     df['lemmatized_description'] = df.description.apply(lemmatize)
     return df
