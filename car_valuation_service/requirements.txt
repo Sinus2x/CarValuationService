@@ -43,3 +43,6 @@ numpy==1.24.1
 pandas==2.0.1
 pyarrow==11.0.0
 tqdm==4.64.0
+
+graphyte==1.7.1
+statsd==3.3.0
