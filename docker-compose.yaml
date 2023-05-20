@@ -31,9 +31,9 @@ services:
     environment:
       - CARBON_AGGREGATOR_DISABLED=1
 
-  ml_service:
-#    build: ./ml_service
-    image: angriff07/grafana_car_valuation_service:latest
+  car_valuation_service:
+    build: ./car_valuation_service
+#    image: angriff07/grafana_car_valuation_service:latest
     ports:
       - 8000:8000
     depends_on:
@@ -41,7 +41,7 @@ services:
     networks:
       - grafana-net
     volumes:
-      - ./ml_service:/service
+      - ./car_valuation_service:/service
     environment:
       - GRAPHITE_HOST=graphite
       - GRAPHITE_PORT=8125
