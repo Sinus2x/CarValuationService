@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from ml.description_lemmatization import lemmatize_description
+import time
 
 
 class Word2VecTransformer(BaseEstimator, TransformerMixin):
@@ -40,7 +41,9 @@ def cols_to_list(row, cols):
 
 
 def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
-    df = lemmatize_description(df)
+    time_lemm_start = time.time()
+    df = lemmatize_description(df, models_dict)
+    time_lemm_end = time.time()
 
     w2v_model = models_dict['w2v_model']
     w2v_model.wv = models_dict['w2v_model_wv']
@@ -50,6 +53,11 @@ def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame
     cols = [f'w2v_desc_{i}' for i in range(1, 11)]
     w2v_df = pd.DataFrame(w2v_desc_transform, columns=cols)
     df['desc_embs'] = w2v_df.apply(lambda x: cols_to_list(x, cols), axis=1)
+    time_desc_w2v_tranform_end = time.time()
+    print(f"****** desc_w2v_extract func analysis ******")
+    print(f"lemmatization - {time_lemm_end - time_lemm_start} seconds")
+    print(f"tranform - {time_desc_w2v_tranform_end - time_lemm_end} seconds")
+    print("************")
     return df
 
 
@@ -87,15 +95,28 @@ def modification_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFram
     return df
 
 
-async def text_features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def text_features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+    time_start = time.time()
     # description w2v
     df = description_w2v_extract(df, models_dict)
+    time_desc_w2v = time.time()
     # description tf-idf
     df = description_tfidf_extract(df, models_dict)
+    time_desc_tfidf = time.time()
     # equipment w2v
     df = equipment_w2v_extract(df, models_dict)
+    time_eq_w2v = time.time()
     # modification w2v
     df = modification_w2v_extract(df, models_dict)
+    time_mod_w2v = time.time()
+
+    print(f"*** text_features_extract func execution times analysis ***")
+    print(f"desc w2v extract- {time_desc_w2v - time_start} seconds")
+    print(f"desc tfidf extract- {time_desc_tfidf - time_desc_w2v} seconds")
+    print(f"equipment w2v extract- {time_eq_w2v - time_desc_tfidf} seconds")
+    print(f"modification w2v extract- {time_mod_w2v - time_eq_w2v} seconds")
+    print(f"*** Sum time for text_features_extract func - {time_mod_w2v - time_start} seconds")
+    print("\n")
     return df
 
 

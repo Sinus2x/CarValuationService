@@ -5,6 +5,7 @@ from catboost import CatBoostRegressor
 from ml.utils import feature_transform
 import yaml
 import warnings
+import time
 
 
 # load config file
@@ -86,9 +87,15 @@ class Model:
 
     async def predict(self, x: dict) -> float:
         x = pd.Series(x).to_frame().T
-        x = await feature_transform(x, self.models_dict)
+        time_start = time.time()
+        x = feature_transform(x, self.models_dict)
+        time_end_transform = time.time()
         col_order = self.model.feature_names_  # catboost requires same order of cols
         preds = self.model.predict(x[col_order])
+        time_end_predict = time.time()
+        print(f"Sum time for features transform - {time_end_transform - time_start} seconds")
+        print(f"Predict - {time_end_predict - time_end_transform} seconds")
+        print(f"Sum time for predict and transform - {time_end_predict - time_start} seconds")
         return preds
 
 

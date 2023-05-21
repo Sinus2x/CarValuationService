@@ -62,5 +62,5 @@
  "owners_count": "3",
  "mileage": 56600,
  "latitude": 58.010374,
- "longitude": 56.229398}
+ "longitude": 56.228398}
  

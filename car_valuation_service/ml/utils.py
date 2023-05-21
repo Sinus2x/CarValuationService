@@ -4,7 +4,7 @@ from ml.add_features import features_extract
 from ml.add_text_features import text_features_extract
 
 
-async def feature_transform(car: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def feature_transform(car: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     """
 
     """
@@ -12,14 +12,11 @@ async def feature_transform(car: pd.DataFrame, models_dict: dict) -> pd.DataFram
     car.sale_end_date = pd.to_datetime(car.sale_end_date)
     # Fill nan
     car = fill_na_transform(car, models_dict)
-
     # New features extract
-    car = await features_extract(car, models_dict)
-
+    car = features_extract(car, models_dict)
     # Text features extraction:
     # w2v (description, modification, equipment), tf-idf (description)
-    car = await text_features_extract(car, models_dict)
-
+    car = text_features_extract(car, models_dict)
     return car
 
 

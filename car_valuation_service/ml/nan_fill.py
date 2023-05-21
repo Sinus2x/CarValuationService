@@ -1,4 +1,5 @@
 import pandas as pd
+import time
 
 
 def equipment_typos_transform(equipment: str) -> str:
@@ -39,9 +40,14 @@ def fill_equipment(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
 
 
 def fill_na_transform(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+    print(f"*** fill_na func execution times analysis ***")
+    time_start = time.time()
     df.description = df.description.fillna('placeholder text')
     df.pts = df.pts.fillna('неизвестно')
     df = fill_equipment(df, models_dict)
+    time_end = time.time()
+    print(f"NaN fill - {time_end - time_start} seconds")
+    print("\n")
     return df
 
 

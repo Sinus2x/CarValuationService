@@ -1,9 +1,10 @@
 import pandas as pd
-import reverse_geocode
+import time
 
 
-def get_city(df: pd.DataFrame, drop_coord_cols: bool = True) -> pd.DataFrame:
-    cities = reverse_geocode.search(df[['latitude', 'longitude']].values)
+def get_city(df: pd.DataFrame, models_dict: dict, drop_coord_cols: bool = True) -> pd.DataFrame:
+    gd = models_dict["geocode_class_instance"]
+    cities = gd.query(df[['latitude', 'longitude']].values)
     df['city'] = [i['city'] for i in cities]
     if drop_coord_cols:
         df = df.drop(['latitude', 'longitude'], axis=1)
@@ -86,19 +87,39 @@ def get_base_price(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     return df
 
 
-async def features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     # city, month, horsepower,
     # engine volume, generation,
     # restyling, mileage per year
     # concat_feature, base price
-    df = get_city(df)
+    time_start = time.time()
+    df = get_city(df, models_dict)
+    time_city = time.time()
     df = get_month(df)
+    time_month = time.time()
     df = get_horse_power(df)
+    time_hp = time.time()
     df = get_engine_volume(df)
+    time_engine_volume = time.time()
     df = get_generation_restyling(df)
+    time_gen_restyling = time.time()
     df = get_mileage_per_year(df)
+    time_mileage = time.time()
     df = get_concat_feature(df)
+    time_concat = time.time()
     df = get_base_price(df, models_dict)
+    time_base_price = time.time()
+    print(f"*** features_extract func execution times analysis ***")
+    print(f"city extract- {time_city - time_start} seconds")
+    print(f"month extract- {time_month - time_city} seconds")
+    print(f"horse power extract- {time_hp - time_month} seconds")
+    print(f"engine volume extract- {time_engine_volume - time_hp} seconds")
+    print(f"generation extract- {time_gen_restyling - time_engine_volume} seconds")
+    print(f"mileage per year extract- {time_mileage - time_gen_restyling} seconds")
+    print(f"concat feature extract- {time_concat - time_mileage} seconds")
+    print(f"base price extract- {time_base_price - time_concat} seconds")
+    print(f"*** Sum time for features_extract func - {time_base_price - time_start} seconds")
+    print("\n")
     return df
 
 
