@@ -76,5 +76,4 @@ if __name__ == "__main__":
 
     debug_model = Model()
     pred = asyncio.run(debug_model.predict(car))
-
     print(f'predicted price - {pred}')
