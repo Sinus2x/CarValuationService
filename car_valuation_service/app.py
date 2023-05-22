@@ -3,7 +3,7 @@ import time
 from fastapi import FastAPI
 from pydantic import BaseModel
 from ml.datatypes import Car
-from load_models import load_model
+from ml.model import Model
 from logging import getLogger
 from statsd import StatsClient
 
@@ -34,7 +34,7 @@ def index():
 @app.on_event("startup")
 def startup_event():
     global model
-    model = load_model()
+    model = Model()
 
 
 @app.post("/predict")

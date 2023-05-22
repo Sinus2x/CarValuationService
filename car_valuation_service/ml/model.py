@@ -2,9 +2,9 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from catboost import CatBoostRegressor
-from ml.utils import feature_transform
+from utils import feature_transform
+from load_models import load_models
 import yaml
-import warnings
 import time
 
 
@@ -40,7 +40,7 @@ class MedianAPE:
 
 
 class Model:
-    def __init__(self, models_dict):
+    def __init__(self):
         self.cat_features = [
             "brand", "model", "generation",
             "body_type", "drive_type", "transmission_type", "engine_type",
@@ -80,7 +80,7 @@ class Model:
             random_seed=42,
             eval_metric=MedianAPE(),
         )
-        self.models_dict = models_dict
+        self.models_dict = load_models()
         self.model = CatBoostRegressor(**self.params)
         path = Path(__file__).parent.parent / config["model_path"]
         self.model.load_model(path)
@@ -90,7 +90,7 @@ class Model:
         time_start = time.time()
         x = feature_transform(x, self.models_dict)
         time_end_transform = time.time()
-        col_order = self.model.feature_names_  # catboost requires same order of cols
+        col_order = self.model.feature_names_
         preds = self.model.predict(x[col_order])
         time_end_predict = time.time()
         print(f"Sum time for features transform - {time_end_transform - time_start} seconds")
@@ -100,14 +100,13 @@ class Model:
 
 
 if __name__ == "__main__":
-    from pathlib import Path
-    from gensim.models import Word2Vec
-    from gensim.models.word2vec import Word2Vec
-    from gensim.models import KeyedVectors
-    import pickle
+    import asyncio
+    import warnings
+
     warnings.simplefilter("ignore")
 
-    debug_car = {
+    car = {
+        "actual_price": 5200000.0,
         "brand": "Porsche",
         "model": "Cayenne",
         "sale_end_date": "2022-11-26 00:00:00",
@@ -129,50 +128,7 @@ if __name__ == "__main__":
         "longitude": 37.938199
     }
 
-    modes_path = "data/weights/equipment_modes.csv"
-    path = Path(__file__).parent.parent / modes_path
-    equipment_modes = pd.read_csv(path)
+    debug_model = Model()
+    pred = asyncio.run(debug_model.predict(car))
 
-    # base_price_grouper
-    weights_save_path = "data/weights/base_price_grouper.csv"
-    path = Path(__file__).parent.parent / weights_save_path
-    base_price_grouper = pd.read_csv(path)
-
-    # desc w2v
-    model_save_path = Path(__file__).parent.parent / 'data/weights/desc_w2v_model'
-    word_vectors_save_path = Path(__file__).parent.parent / 'data/weights/desc_w2v_word_vectors'
-    w2v_model = Word2Vec.load(str(model_save_path))
-    w2v_model_wv = KeyedVectors.load(str(word_vectors_save_path), mmap='r')
-
-    # desc tf-idf
-    model_save_path = Path(__file__).parent.parent / 'data/weights/desc_tfidf_model.pkl'
-    with open(model_save_path, 'rb') as f:
-        tfidf = pickle.load(f)
-
-    # eq w2v
-    model_save_path = Path(__file__).parent.parent / 'data/weights/equip_w2v_model'
-    word_vectors_save_path = Path(__file__).parent.parent / 'data/weights/equip_w2v_word_vectors'
-    equipment_w2v_model = Word2Vec.load(str(model_save_path))
-    equipment_w2v_model_wv = KeyedVectors.load(str(word_vectors_save_path), mmap='r')
-
-    # mod w2v
-    model_save_path = Path(__file__).parent.parent / 'data/weights/modification_w2v_model'
-    word_vectors_save_path = Path(__file__).parent.parent / 'data/weights/modification_w2v_word_vectors'
-    modification_w2v_model = Word2Vec.load(str(model_save_path))
-    modification_w2v_model_wv = KeyedVectors.load(str(word_vectors_save_path), mmap='r')
-
-    features_models_dict = {
-        "base_price_grouper": base_price_grouper,
-        "equipment_modes": equipment_modes,
-        "w2v_model": w2v_model,
-        "w2v_model_wv": w2v_model_wv,
-        "tfidf": tfidf,
-        "eq_w2v_model": equipment_w2v_model,
-        "eq_w2v_model_wv": equipment_w2v_model_wv,
-        "mod_w2v_model": modification_w2v_model,
-        "mod_w2v_model_wv": modification_w2v_model_wv,
-    }
-
-    debug_model = Model(models_dict=features_models_dict)
-
-    print(debug_model.predict(debug_car))
+    print(f'predicted price - {pred}')

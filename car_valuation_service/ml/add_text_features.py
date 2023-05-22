@@ -1,36 +1,7 @@
 import pandas as pd
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
-from ml.description_lemmatization import lemmatize_description
+from description_lemmatization import lemmatize_description
 import time
-
-
-class Word2VecTransformer(BaseEstimator, TransformerMixin):
-
-    def __init__(self, w2v_model, alpha=1):
-        self.w2v_model = w2v_model
-        self.alpha = alpha
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X, y=None):
-        X_transformed = np.zeros((len(X), self.w2v_model.wv.vector_size))
-        for i, title in enumerate(X):
-            title_vector = np.zeros((self.w2v_model.wv.vector_size,))
-            try:
-                tokens = title.split()
-            except BaseException:
-                continue
-            counter = 1
-
-            for token in tokens:
-                if token in self.w2v_model.wv.key_to_index:
-                    title_vector += self.w2v_model.wv.get_vector(token)
-                    counter += 1
-            X_transformed[i] = title_vector / (self.alpha * counter)
-
-        return X_transformed
 
 
 def cols_to_list(row, cols):
@@ -45,10 +16,7 @@ def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame
     df = lemmatize_description(df, models_dict)
     time_lemm_end = time.time()
 
-    w2v_model = models_dict['w2v_model']
-    w2v_model.wv = models_dict['w2v_model_wv']
-
-    desc2vec = Word2VecTransformer(w2v_model=w2v_model)
+    desc2vec = models_dict["desc2vec"]
     w2v_desc_transform = desc2vec.transform(df.lemmatized_description.values)
     cols = [f'w2v_desc_{i}' for i in range(1, 11)]
     w2v_df = pd.DataFrame(w2v_desc_transform, columns=cols)
@@ -74,9 +42,7 @@ def description_tfidf_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFra
 
 
 def equipment_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
-    equipment_w2v_model = models_dict['eq_w2v_model']
-    equipment_w2v_model.wv = models_dict['eq_w2v_model_wv']
-    equip_w2v_transformer = Word2VecTransformer(w2v_model=equipment_w2v_model)
+    equip_w2v_transformer = models_dict["eq2vec"]
     equipment_w2v_df = equip_w2v_transformer.transform(df.equipment.values)
     cols = [f'eq_w2v_{i}' for i in range(1, 6)]
     equipment_w2v_df = pd.DataFrame(equipment_w2v_df, columns=cols)
@@ -85,9 +51,7 @@ def equipment_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
 
 
 def modification_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
-    modification_w2v_model = models_dict['mod_w2v_model']
-    modification_w2v_model.wv = models_dict['mod_w2v_model_wv']
-    modification_w2v_transformer = Word2VecTransformer(w2v_model=modification_w2v_model)
+    modification_w2v_transformer = models_dict["mod2vec"]
     modification_w2v_df = modification_w2v_transformer.transform(df.modification.values)
     cols = [f'mod_w2v_{i}' for i in range(1, 6)]
     modification_w2v_df = pd.DataFrame(modification_w2v_df, columns=cols)
