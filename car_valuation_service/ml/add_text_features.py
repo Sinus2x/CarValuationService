@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from description_lemmatization import lemmatize_description
+from ml.description_lemmatization import lemmatize_description
 import time
 
 
