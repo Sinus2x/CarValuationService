@@ -7,8 +7,8 @@
 ## Запуск
 `git clone https://github.com/Sinus2x/CarValuationService.git` <br />
 `cd ./CarValuationService` <br />
-`make build` <br />
-`make run`
+`docker volume create --name=grafana-volume` <br />
+`docker-compose up -d`
 
 Сервис доступен по https://0.0.0.0:8080/docs, где во вкладке `/predict` можно протестировать запрос на оценку стоимости
 машины.
