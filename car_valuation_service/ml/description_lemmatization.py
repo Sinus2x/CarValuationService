@@ -1,38 +1,38 @@
 import pandas as pd
 import re
 import time
+from typing import List
 
 
-def preprocess_text(text):
-    text = re.findall('[^\W_]+', text)
-    text = [token.lower() for token in text if len(token) > 1]
-    text = " ".join(text)
-    if len(text) == 0:
-        return 'placeholder text'
-    return text
+def preprocess_text(description: str) -> List[str]:
+    description = re.findall('[^\W_]+', description)
+    description = [token.lower() for token in description if len(token) > 1]
+    if len(description) == 0:
+        return ['placeholder', 'text']
+    return description
 
 
-def lemmatize(text, models_dict: dict):
+def lemmatize(description: List[str], models_dict: dict) -> List[str]:
     lemmatizer = models_dict['lemmatizer']
     time_class_init = time.time()
-    lemmas = " ".join([lemmatizer.parse(word)[0].normal_form for word in text.split()])
+    lemmas = [lemmatizer.parse(word)[0].normal_form for word in description]
     time_end = time.time()
     print(f"time to lemmatize text: {time_end - time_class_init} seconds")
     return lemmas
 
 
-def lemmatize_description(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def lemmatize_description(car: dict, models_dict: dict) -> dict:
     preprocess_start = time.time()
-    df['description'] = df.description.apply(preprocess_text)
+    car['description'] = preprocess_text(car['description'])
     preprocess_end = time.time()
-    df['lemmatized_description'] = df.description.apply(lambda x: lemmatize(x, models_dict))
+    car['lemmatized_description_list'] = lemmatize(car['description'], models_dict)
+    car['lemmatized_description'] = ' '.join(car['lemmatized_description_list'])
     lemm_end = time.time()
-
     print("********* lemmatization func execution time analysis *********")
     print(f"description preprocessing - {preprocess_end - preprocess_start} seconds")
     print(f"lemmatization - {lemm_end - preprocess_end} seconds")
     print("******************")
-    return df
+    return car
 
 
 if __name__ == "__main__":

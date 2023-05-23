@@ -1,4 +1,3 @@
-import pandas as pd
 import time
 
 
@@ -19,7 +18,7 @@ def equipment_typos_transform(equipment: str) -> str:
     return typos_dict.get(equipment, equipment).lower()
 
 
-def fill_equipment(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def fill_equipment(car: dict, models_dict: dict) -> dict:
     def equipment_mode_transform(row, modes_dict):
         if row['equipment'] == 'none':
             return modes_dict.get(
@@ -28,27 +27,25 @@ def fill_equipment(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
             )
         return row['equipment']
 
-    df.equipment = df.equipment.fillna('none').apply(
-        lambda x: equipment_typos_transform(x)
-    )
-
+    car['equipment'] = equipment_typos_transform(car['equipment'])
     equipment_modes = models_dict['equipment_modes']
-    df['equipment'] = df.apply(
-        lambda x: equipment_mode_transform(x, equipment_modes), axis=1
-    )
-    return df
+    car['equipment'] = equipment_mode_transform(car, equipment_modes)
+    return car
 
 
-def fill_na_transform(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def fill_na_transform(car: dict, models_dict: dict) -> dict:
     print(f"*** fill_na func execution times analysis ***")
     time_start = time.time()
-    df.description = df.description.fillna('placeholder text')
-    df.pts = df.pts.fillna('неизвестно')
-    df = fill_equipment(df, models_dict)
+    if not len(car["description"]):
+        car["description"] = 'placeholder text'
+    if not car["pts"]:
+        car["pts"] = 'неизвестно'
+
+    car = fill_equipment(car, models_dict)
     time_end = time.time()
     print(f"NaN fill - {time_end - time_start} seconds")
     print("\n")
-    return df
+    return car
 
 
 if __name__ == "__main__":

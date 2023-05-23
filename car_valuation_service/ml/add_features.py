@@ -1,45 +1,46 @@
 import pandas as pd
 import time
+import re
 
 
-def get_city(df: pd.DataFrame, models_dict: dict, drop_coord_cols: bool = True) -> pd.DataFrame:
+def get_city(car: dict, models_dict: dict) -> dict:
     gd = models_dict["geocode_class_instance"]
-    cities = gd.query(df[['latitude', 'longitude']].values)
-    df['city'] = [i['city'] for i in cities]
-    if drop_coord_cols:
-        df = df.drop(['latitude', 'longitude'], axis=1)
-    return df
+    car['city'] = gd.query([(car['latitude'], car['longitude'])])[0]['city']
+    return car
 
 
-def get_month(df: pd.DataFrame) -> pd.DataFrame:
-    def month_extract(row):
-        if row['sale_end_date'] is pd.NaT:
-            return row['close_date'].month
-        return row['sale_end_date'].month
-
-    df['month'] = df.apply(lambda x: month_extract(x), axis=1)
-    return df
+def get_month(car: dict) -> dict:
+    car['month'] = car['sale_end_date'].month
+    return car
 
 
-def get_horse_power(df: pd.DataFrame) -> pd.DataFrame:
-    hp_df = df.modification.str.extract(r'(?P<horse_power>\(.*\))')
-    horse_power = hp_df.horse_power.str.strip('( л.с.)').fillna('382')
-    horse_power = horse_power.astype(int)
-    df['horse_power'] = horse_power
-    return df
+def get_horse_power(car: dict) -> dict:
+    try:
+        horse_power = re.search(r'\(.*\)', car['modification']).group()
+        horse_power = int(horse_power.strip('( л.с.)'))
+    except AttributeError:
+        horse_power = 382
+    car['horse_power'] = horse_power
+    return car
 
 
-def get_engine_volume(df: pd.DataFrame) -> pd.DataFrame:
-    tmp_df = df[['modification', 'model']]
-    tmp_df['engine_volume'] = tmp_df.modification.str.extract(r'(?P<engine_volume>\d\.\d)')
-    tmp_df.loc[tmp_df['modification'] == 'FX30d 4WD AT (238 л.с.)', 'engine_volume'] = '3.0'
-    tmp_df.loc[tmp_df['modification'] == 'P85', 'engine_volume'] = '0.0'
-    tmp_df.loc[tmp_df['model'] == 'FX30', 'engine_volume'] = '3.0'
-    df['engine_volume'] = tmp_df['engine_volume']
-    return df
+def get_engine_volume(car: dict) -> dict:
+    try:
+        engine_volume = re.search(r'\d\.\d', car['modification']).group()
+    except AttributeError:
+        if car['modification'] == 'FX30d 4WD AT (238 л.с.)':
+            engine_volume = '3.0'
+        elif car['modification'] == 'P85':
+            engine_volume = '0.0'
+        elif car['model'] == 'FX30':
+            engine_volume = '3.0'
+        else:
+            engine_volume = '2.4'
+    car['engine_volume'] = engine_volume
+    return car
 
 
-def get_generation_restyling(df: pd.DataFrame) -> pd.DataFrame:
+def get_generation_restyling(car: dict) -> dict:
     def restyling_extract(gen_list: list) -> int:
         """
         Выделяем поколение рестайлинга из списка слов колонки generation
@@ -50,64 +51,65 @@ def get_generation_restyling(df: pd.DataFrame) -> pd.DataFrame:
             return 1
         return 0
 
-    generation_split = df['generation'].str.split()
-    df['generation'] = generation_split.apply(lambda x: x[0])
-    df['generation_years'] = generation_split.apply(lambda x: x[-1])
-    df['restyling'] = generation_split.apply(lambda x: restyling_extract(x))
-    return df
+    generation_split = car['generation'].split()
+    car['generation'] = generation_split[0]
+    car['generation_years'] = generation_split[-1]
+    car['restyling'] = restyling_extract(generation_split)
+    return car
 
 
-def get_mileage_per_year(df: pd.DataFrame) -> pd.DataFrame:
-    df['mileage_per_year'] = df.mileage / (
-            df.year.max() +
+def get_mileage_per_year(car: dict) -> dict:
+    #car['mileage_per_year'] = car['mileage'] / (2023 - car['year'] + 1e-9) # 21281.19999574376
+    car['mileage_per_year'] = car['mileage'] / ( # 116079.27272726313
+            car['year'] +
             (
-                    df[df.year.eq(df.year.max())].month.max() / 12
-            ) - df.year
-    )
-    return df
+                    car['month'] / 12
+            ) - car['year'])
+    return car
 
 
-def get_concat_feature(df: pd.DataFrame) -> pd.DataFrame:
-    df['brand_model_gen_res_mod'] = df.brand + ' ' + \
-                                    df.model + ' ' + \
-                                    df.generation + ' ' + \
-                                    df.restyling.astype(str)
-    return df
+def get_concat_feature(car: dict) -> dict:
+    car['brand_model_gen_res_mod'] = car['brand'] + ' ' + \
+                                    car['model'] + ' ' + \
+                                    car['generation'] + ' ' + \
+                                    str(car['restyling'])
+    return car
 
 
-def get_base_price(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
-    def predict_base_price(X, price_grouped):
-        result = X.merge(price_grouped, how='left')
+def get_base_price(car: dict, models_dict: dict) -> dict:
+    def predict_base_price(car, price_grouped):
+        result = car.merge(price_grouped, how='left')
         y_pred = result['base_price'].values
         return y_pred
 
     base_price_grouper_cols = ['brand', 'model', 'generation', 'modification']
     base_price_grouper = models_dict['base_price_grouper']
-    df['base_price'] = predict_base_price(df[base_price_grouper_cols], base_price_grouper)
-    return df
+
+    car['base_price'] = predict_base_price(pd.Series(car).to_frame().T[base_price_grouper_cols], base_price_grouper)
+    return car
 
 
-def features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def features_extract(car: dict, models_dict: dict) -> dict:
     # city, month, horsepower,
     # engine volume, generation,
     # restyling, mileage per year
     # concat_feature, base price
     time_start = time.time()
-    df = get_city(df, models_dict)
+    car = get_city(car, models_dict)
     time_city = time.time()
-    df = get_month(df)
+    car = get_month(car)
     time_month = time.time()
-    df = get_horse_power(df)
+    car = get_horse_power(car)
     time_hp = time.time()
-    df = get_engine_volume(df)
+    car = get_engine_volume(car)
     time_engine_volume = time.time()
-    df = get_generation_restyling(df)
+    car = get_generation_restyling(car)
     time_gen_restyling = time.time()
-    df = get_mileage_per_year(df)
+    car = get_mileage_per_year(car)
     time_mileage = time.time()
-    df = get_concat_feature(df)
+    car = get_concat_feature(car)
     time_concat = time.time()
-    df = get_base_price(df, models_dict)
+    car = get_base_price(car, models_dict)
     time_base_price = time.time()
     print(f"*** features_extract func execution times analysis ***")
     print(f"city extract- {time_city - time_start} seconds")
@@ -120,7 +122,7 @@ def features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     print(f"base price extract- {time_base_price - time_concat} seconds")
     print(f"*** Sum time for features_extract func - {time_base_price - time_start} seconds")
     print("\n")
-    return df
+    return car
 
 
 if __name__ == "__main__":

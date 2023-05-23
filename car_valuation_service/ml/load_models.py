@@ -17,20 +17,15 @@ class Word2VecTransformer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X, y=None):
-        X_transformed = np.zeros((len(X), self.w2v_model.wv.vector_size))
-        for i, title in enumerate(X):
-            title_vector = np.zeros((self.w2v_model.wv.vector_size,))
-            try:
-                tokens = title.split()
-            except BaseException:
-                continue
-            counter = 1
-            for token in tokens:
-                if token in self.w2v_model.wv.key_to_index:
-                    title_vector += self.w2v_model.wv.get_vector(token)
-                    counter += 1
-            X_transformed[i] = title_vector / (self.alpha * counter)
+    def transform(self, tokens, y=None):
+        X_transformed = None
+        text_vector = np.zeros((self.w2v_model.wv.vector_size,))
+        counter = 1
+        for token in tokens:
+            if token in self.w2v_model.wv.key_to_index:
+                text_vector += self.w2v_model.wv.get_vector(token)
+                counter += 1
+        X_transformed = text_vector / (self.alpha * counter)
         return X_transformed
 
 

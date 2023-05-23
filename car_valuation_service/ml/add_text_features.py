@@ -11,69 +11,60 @@ def cols_to_list(row, cols):
     return lst
 
 
-def description_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def description_w2v_extract(car: dict, models_dict: dict) -> dict:
     time_lemm_start = time.time()
-    df = lemmatize_description(df, models_dict)
+    car = lemmatize_description(car, models_dict)
     time_lemm_end = time.time()
-
     desc2vec = models_dict["desc2vec"]
-    w2v_desc_transform = desc2vec.transform(df.lemmatized_description.values)
-    cols = [f'w2v_desc_{i}' for i in range(1, 11)]
-    w2v_df = pd.DataFrame(w2v_desc_transform, columns=cols)
-    df['desc_embs'] = w2v_df.apply(lambda x: cols_to_list(x, cols), axis=1)
+    w2v_desc_transform = desc2vec.transform(car['lemmatized_description_list'])
+    car['desc_embs'] = w2v_desc_transform
     time_desc_w2v_tranform_end = time.time()
     print(f"****** desc_w2v_extract func analysis ******")
     print(f"lemmatization - {time_lemm_end - time_lemm_start} seconds")
-    print(f"tranform - {time_desc_w2v_tranform_end - time_lemm_end} seconds")
+    print(f"transform - {time_desc_w2v_tranform_end - time_lemm_end} seconds")
     print("************")
-    return df
+    return car
 
 
-def description_tfidf_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def description_tfidf_extract(car: dict, models_dict: dict) -> dict:
     tfidf = models_dict['tfidf']
-    tfidf_df = tfidf.transform(df.lemmatized_description.astype(str).values)
-    tfidf_embs_df = pd.DataFrame()
-    cols = ['tfidf_sum', 'tfidf_max', 'tfidf_mean']
-    tfidf_embs_df['tfidf_sum'] = np.array(tfidf_df.sum(axis=1).ravel())[0]
-    tfidf_embs_df['tfidf_max'] = np.array(tfidf_df.max(axis=1).toarray().ravel())
-    tfidf_embs_df['tfidf_mean'] = np.array(tfidf_df.mean(axis=1).ravel())[0]
-    df['tfidf_embs'] = tfidf_embs_df.apply(lambda x: cols_to_list(x, cols), axis=1)
-    return df
+    tfidf_df = tfidf.transform([car['lemmatized_description']])
+    car['tfidf_embs'] = [
+        tfidf_df.sum(),
+        tfidf_df.max(),
+        tfidf_df.mean()
+    ]
+    return car
 
 
-def equipment_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def equipment_w2v_extract(car: dict, models_dict: dict) -> dict:
     equip_w2v_transformer = models_dict["eq2vec"]
-    equipment_w2v_df = equip_w2v_transformer.transform(df.equipment.values)
-    cols = [f'eq_w2v_{i}' for i in range(1, 6)]
-    equipment_w2v_df = pd.DataFrame(equipment_w2v_df, columns=cols)
-    df['eq_embs'] = equipment_w2v_df.apply(lambda x: cols_to_list(x, cols), axis=1)
-    return df
+    equipment_w2v_df = equip_w2v_transformer.transform(car['equipment'].split())
+    car['eq_embs'] = equipment_w2v_df
+    return car
 
 
-def modification_w2v_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def modification_w2v_extract(car: dict, models_dict: dict) -> dict:
     modification_w2v_transformer = models_dict["mod2vec"]
-    modification_w2v_df = modification_w2v_transformer.transform(df.modification.values)
-    cols = [f'mod_w2v_{i}' for i in range(1, 6)]
-    modification_w2v_df = pd.DataFrame(modification_w2v_df, columns=cols)
-    df['mod_embs'] = modification_w2v_df.apply(lambda x: cols_to_list(x, cols), axis=1)
-    return df
+    modification_w2v_df = modification_w2v_transformer.transform(car['modification'].split())
+    car['mod_embs'] = modification_w2v_df
+    return car
 
 
-def text_features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
+def text_features_extract(car: dict, models_dict: dict) -> dict:
     time_start = time.time()
     # description w2v
-    df = description_w2v_extract(df, models_dict)
+    car = description_w2v_extract(car, models_dict)
     time_desc_w2v = time.time()
     # description tf-idf
-    df = description_tfidf_extract(df, models_dict)
+    car = description_tfidf_extract(car, models_dict)
     time_desc_tfidf = time.time()
     # equipment w2v
-    df = equipment_w2v_extract(df, models_dict)
+    car = equipment_w2v_extract(car, models_dict)
     time_eq_w2v = time.time()
     # modification w2v
-    df = modification_w2v_extract(df, models_dict)
+    car = modification_w2v_extract(car, models_dict)
     time_mod_w2v = time.time()
-
     print(f"*** text_features_extract func execution times analysis ***")
     print(f"desc w2v extract- {time_desc_w2v - time_start} seconds")
     print(f"desc tfidf extract- {time_desc_tfidf - time_desc_w2v} seconds")
@@ -81,7 +72,7 @@ def text_features_extract(df: pd.DataFrame, models_dict: dict) -> pd.DataFrame:
     print(f"modification w2v extract- {time_mod_w2v - time_eq_w2v} seconds")
     print(f"*** Sum time for text_features_extract func - {time_mod_w2v - time_start} seconds")
     print("\n")
-    return df
+    return car
 
 
 if __name__ == "__main__":

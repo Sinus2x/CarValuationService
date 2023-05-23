@@ -86,9 +86,9 @@ class Model:
         self.model.load_model(path)
 
     async def predict(self, x: dict) -> float:
-        x = pd.Series(x).to_frame().T
         time_start = time.time()
         x = feature_transform(x, self.models_dict)
+        x = pd.Series(x).to_frame().T
         time_end_transform = time.time()
         col_order = self.model.feature_names_
         preds = self.model.predict(x[col_order])
