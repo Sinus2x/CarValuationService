@@ -11,10 +11,10 @@ from statsd import StatsClient
 
 logger = getLogger()
 
-"""GRAPHITE_HOST = os.environ.get('GRAPHITE_HOST', None)
+GRAPHITE_HOST = os.environ.get('GRAPHITE_HOST', None)
 GRAPHITE_PORT = os.environ.get('GRAPHITE_PORT', None)
 logger.warning(f'graphite url: {GRAPHITE_HOST}, port: {GRAPHITE_PORT}')
-statsd = StatsClient(GRAPHITE_HOST, int(GRAPHITE_PORT), prefix='car_valuation_service')"""
+statsd = StatsClient(GRAPHITE_HOST, int(GRAPHITE_PORT), prefix='car_valuation_service')
 
 
 class Prediction(BaseModel):
