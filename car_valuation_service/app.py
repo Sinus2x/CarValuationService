@@ -40,11 +40,21 @@ def startup_event():
 
 @app.post("/predict")
 async def predict(x: Car):
+    statsd.incr(f'predict_price.count')
+    error_brands = {
+        'CheryExeed', 'Dongfeng', 'EXEED', 'GMC',
+        'Haima', 'Isuzu', 'JMC', 'Saturn', 'Tianye', 'ЗИЛ'
+    }
+    if x.brand in error_brands:
+        statsd.incr(f'predict_price.request_status.error.count')
+        raise KeyError
+
     time_start = time.perf_counter()
     pred = await model.predict(x.dict())
     time_end = time.perf_counter()
     statsd.timing(f'predict_price.timing.inference_time', time_end - time_start)
     statsd.incr(f'predict_price.request_status.success.count')
+
     return Prediction(
         predicted_value=int(pred)
     )

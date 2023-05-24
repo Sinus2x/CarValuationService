@@ -14,7 +14,8 @@ brand = [
     'УАЗ', 'Land Rover', 'Scion', 'ТагАЗ', 'Chrysler', 'ВИС', 'BYD',
     'Cadillac', 'ИЖ', 'JAC', 'Hafei', 'Iveco', 'ЗАЗ', 'Saab', 'FAW',
     'ЛуАЗ', 'ZX', 'Pontiac', 'Datsun', 'Exeed', 'GAC', 'Changan',
-    'Brilliance', 'Bentley', 'Rover', 'BAW', 'Tesla', 'Acura'
+    'Brilliance', 'Bentley', 'Rover', 'BAW', 'Tesla', 'Acura',
+    'CheryExeed', 'Dongfeng', 'EXEED', 'GMC', 'Haima', 'Isuzu', 'JMC', 'Saturn', 'Tianye', 'ЗИЛ'
 ]
 
 model = [
