@@ -257,6 +257,7 @@ modification = [
     '2.0 D 4WD AT (86 л.с.)', '3.0 4WD AT (130 л.с.)', '2.8 AT (174 л.с.)',
     '1.9 TDCi MT (130 л.с.)'
 ]
+crashes = [0, 1, 2, 3, 4, 5]
 drive_type = ['Передний', 'Полный', 'Задний']
 transmission_type = ['Автомат', 'Механика', 'Вариатор', 'Робот']
 engine_type = ['Бензин', 'Дизель', 'Гибрид', 'Газ', 'Электро']
@@ -282,6 +283,7 @@ def generate_car():
         "year": random.choice(year),
         "generation": random.choice(generation),
         "body_type": random.choice(body_type),
+        "crashes": random.choice(crashes),
         "modification": random.choice(modification),
         "drive_type": random.choice(drive_type),
         "transmission_type": random.choice(transmission_type),
@@ -302,6 +304,7 @@ class QuickstartUser(HttpUser):
     @task
     def predict(self):
         self.client.post('/predict/', json=generate_car())
+
 
 if __name__ == "__main__":
     pass

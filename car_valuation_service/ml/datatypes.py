@@ -13,6 +13,7 @@ class Car(BaseModel):
     generation: str
     body_type: str
     equipment: Optional[str] = 'None'
+    crashes: int = 0
     modification: str
     drive_type: str
     transmission_type: str

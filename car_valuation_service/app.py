@@ -71,6 +71,7 @@ if __name__ == "__main__":
             "generation": "III (2017—2023)",
             "body_type": "Внедорожник",
             "equipment": "Cayenne",
+            "crashes": 2,
             "modification": "3.0 4WD AT (340 л.с.)",
             "drive_type": "Полный",
             "transmission_type": "Автомат",

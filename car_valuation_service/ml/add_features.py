@@ -59,12 +59,7 @@ def get_generation_restyling(car: dict) -> dict:
 
 
 def get_mileage_per_year(car: dict) -> dict:
-    #car['mileage_per_year'] = car['mileage'] / (2023 - car['year'] + 1e-9) # 21281.19999574376
-    car['mileage_per_year'] = car['mileage'] / ( # 116079.27272726313
-            car['year'] +
-            (
-                    car['month'] / 12
-            ) - car['year'])
+    car['mileage_per_year'] = car['mileage'] / (2023.5 - car['year'])
     return car
 
 
