@@ -5,7 +5,7 @@
 3. **Улучшение оценки авто** - название проекта
 
 ## Запуск
-`git clone https://github.com/Sinus2x/CarValuationService.git` <br />
+`git clone -b litvinov https://github.com/Sinus2x/CarValuationService.git` <br />
 `cd ./CarValuationService` <br />
 `make build` <br />
 `make run`
