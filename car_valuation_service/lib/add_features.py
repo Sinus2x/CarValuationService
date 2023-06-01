@@ -1,20 +1,27 @@
-import pandas as pd
-import time
+"""
+Модуль, который содержит все функции, нужные для преобразования признаков машины.
+"""
+
 import re
+
+import pandas as pd
 
 
 def get_city(car: dict, models_dict: dict) -> dict:
-    gd = models_dict["geocode_class_instance"]
-    car['city'] = gd.query([(car['latitude'], car['longitude'])])[0]['city']
+    """Извлекает город по полям `latitude`, `longitude`."""
+    geo_decoder = models_dict['geocode_class_instance']
+    car['city'] = geo_decoder.query([(car['latitude'], car['longitude'])])[0]['city']
     return car
 
 
 def get_month(car: dict) -> dict:
+    """Извлекает месяц по полю `sale_end_date`."""
     car['month'] = car['sale_end_date'].month
     return car
 
 
 def get_horse_power(car: dict) -> dict:
+    """Извлекает регуляркой лошадиные силы двигателя из поля `modification`."""
     try:
         horse_power = re.search(r'\(.*\)', car['modification']).group()
         horse_power = int(horse_power.strip('( л.с.)'))
@@ -25,6 +32,7 @@ def get_horse_power(car: dict) -> dict:
 
 
 def get_engine_volume(car: dict) -> dict:
+    """Извлекает регуляркой объём цилиндров двигателя из поля `modification`."""
     try:
         engine_volume = re.search(r'\d\.\d', car['modification']).group()
     except AttributeError:
@@ -40,17 +48,17 @@ def get_engine_volume(car: dict) -> dict:
     return car
 
 
-def get_generation_restyling(car: dict) -> dict:
-    def restyling_extract(gen_list: list) -> int:
-        """
-        Выделяем поколение рестайлинга из списка слов колонки generation
-        """
-        if len(gen_list) == 4:
-            return int(gen_list[-2])
-        elif len(gen_list) == 3:
-            return 1
-        return 0
+def restyling_extract(gen_list: list) -> int:
+    """Выделяем поколение рестайлинга из списка слов поля `generation`."""
+    if len(gen_list) == 4:
+        return int(gen_list[-2])
+    if len(gen_list) == 3:
+        return 1
+    return 0
 
+
+def get_generation_restyling(car: dict) -> dict:
+    """Извлекает признаки поколения и рестайлинга из поля `generation`."""
     generation_split = car['generation'].split()
     car['generation'] = generation_split[0]
     car['generation_years'] = generation_split[-1]
@@ -59,19 +67,21 @@ def get_generation_restyling(car: dict) -> dict:
 
 
 def get_mileage_per_year(car: dict) -> dict:
+    """Вычисляет пробег в год по полям `mileage`, `year`."""
     car['mileage_per_year'] = car['mileage'] / (2023.5 - car['year'])
     return car
 
 
 def get_concat_feature(car: dict) -> dict:
-    car['brand_model_gen_res_mod'] = car['brand'] + ' ' + \
-                                    car['model'] + ' ' + \
-                                    car['generation'] + ' ' + \
-                                    str(car['restyling'])
+    """Получаем длинную строку из полей `brand`, `model`, `generation`, `restyling`."""
+    keys = ['brand', 'model', 'generation']
+    car['brand_model_gen_res_mod'] = ' '.join(
+        car[key] for key in keys) + str(car['restyling'])
     return car
 
 
 def get_base_price(car: dict, models_dict: dict) -> dict:
+    """Получаем базовую цену по группе полей `brand`, `model`, `generation`, `modification`."""
     def predict_base_price(car, price_grouped):
         result = car.merge(price_grouped, how='left')
         y_pred = result['base_price'].values
@@ -80,45 +90,33 @@ def get_base_price(car: dict, models_dict: dict) -> dict:
     base_price_grouper_cols = ['brand', 'model', 'generation', 'modification']
     base_price_grouper = models_dict['base_price_grouper']
 
-    car['base_price'] = predict_base_price(pd.Series(car).to_frame().T[base_price_grouper_cols], base_price_grouper)
+    car['base_price'] = predict_base_price(
+        pd.Series(car).to_frame().T[base_price_grouper_cols], base_price_grouper)
     return car
 
 
 def features_extract(car: dict, models_dict: dict) -> dict:
-    # city, month, horsepower,
-    # engine volume, generation,
-    # restyling, mileage per year
-    # concat_feature, base price
-    time_start = time.time()
+    """Извлекает и добавляет признаки машины, нужные для модели.
+
+    Список новых признаков:
+    - `city`
+    - `month`
+    - `horsepower`
+    - `engine_volume`
+    - `restyling`
+    - `mileage_per_year`
+    - и т.п.
+    """
+    transformations = [
+        get_month,
+        get_horse_power,
+        get_engine_volume,
+        get_generation_restyling,
+        get_mileage_per_year,
+        get_concat_feature,
+    ]
+    for transform in transformations:
+        car = transform(car)
     car = get_city(car, models_dict)
-    time_city = time.time()
-    car = get_month(car)
-    time_month = time.time()
-    car = get_horse_power(car)
-    time_hp = time.time()
-    car = get_engine_volume(car)
-    time_engine_volume = time.time()
-    car = get_generation_restyling(car)
-    time_gen_restyling = time.time()
-    car = get_mileage_per_year(car)
-    time_mileage = time.time()
-    car = get_concat_feature(car)
-    time_concat = time.time()
     car = get_base_price(car, models_dict)
-    time_base_price = time.time()
-    print(f"*** features_extract func execution times analysis ***")
-    print(f"city extract- {time_city - time_start} seconds")
-    print(f"month extract- {time_month - time_city} seconds")
-    print(f"horse power extract- {time_hp - time_month} seconds")
-    print(f"engine volume extract- {time_engine_volume - time_hp} seconds")
-    print(f"generation extract- {time_gen_restyling - time_engine_volume} seconds")
-    print(f"mileage per year extract- {time_mileage - time_gen_restyling} seconds")
-    print(f"concat feature extract- {time_concat - time_mileage} seconds")
-    print(f"base price extract- {time_base_price - time_concat} seconds")
-    print(f"*** Sum time for features_extract func - {time_base_price - time_start} seconds")
-    print("\n")
     return car
-
-
-if __name__ == "__main__":
-    pass
