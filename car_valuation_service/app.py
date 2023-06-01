@@ -3,8 +3,8 @@ import asyncio
 import time
 from fastapi import FastAPI
 from pydantic import BaseModel
-from ml.datatypes import Car
-from ml.model import Model
+from lib.datatypes import Car
+from lib.model import Model
 from logging import getLogger
 from statsd import StatsClient
 
