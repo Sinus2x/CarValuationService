@@ -1,10 +1,9 @@
-import time
-
+"""
+Модуль, который содержит все функции для заполнения пропусков в данных.
+"""
 
 def equipment_typos_transform(equipment: str) -> str:
-    """
-    Уберем найденные опечатки и приведём колонку к нижнему регистру
-    """
+    """Уберем найденные опечатки и приведём колонку к нижнему регистру."""
     typos_dict = {
         "Bussines": "Business",
         "Elegancе": "Elegance",
@@ -18,15 +17,18 @@ def equipment_typos_transform(equipment: str) -> str:
     return typos_dict.get(equipment, equipment).lower()
 
 
-def fill_equipment(car: dict, models_dict: dict) -> dict:
-    def equipment_mode_transform(row, modes_dict):
-        if row['equipment'] == 'none':
-            return modes_dict.get(
-                (row['brand'], row['model'], row['generation']),
-                'базовая'
-            )
-        return row['equipment']
+def equipment_mode_transform(row, modes_dict):
+    """Заполняет пропуск в поле `equipment` по умолчанию."""
+    if row['equipment'] == 'none':
+        return modes_dict.get(
+            (row['brand'], row['model'], row['generation']),
+            'базовая'
+        )
+    return row['equipment']
 
+
+def fill_equipment(car: dict, models_dict: dict) -> dict:
+    """Заполняет пропуски и опечатки в поле `equipment`."""
     car['equipment'] = equipment_typos_transform(car['equipment'])
     equipment_modes = models_dict['equipment_modes']
     car['equipment'] = equipment_mode_transform(car, equipment_modes)
@@ -34,19 +36,11 @@ def fill_equipment(car: dict, models_dict: dict) -> dict:
 
 
 def fill_na_transform(car: dict, models_dict: dict) -> dict:
-    print(f"*** fill_na func execution times analysis ***")
-    time_start = time.time()
-    if not len(car["description"]):
+    """Заполняет пропуски и опечатки в тексте, в полях `pts` и `equipment`."""
+    if not car["description"]:
         car["description"] = 'placeholder text'
     if not car["pts"]:
         car["pts"] = 'неизвестно'
 
     car = fill_equipment(car, models_dict)
-    time_end = time.time()
-    print(f"NaN fill - {time_end - time_start} seconds")
-    print("\n")
     return car
-
-
-if __name__ == "__main__":
-    pass
