@@ -1,6 +1,7 @@
 data/*.f
 data/*.csv
 
+.vscode
 .idea
 .env
 .venv
