@@ -304,7 +304,3 @@ class QuickstartUser(HttpUser):
     @task
     def predict(self):
         self.client.post('/predict/', json=generate_car())
-
-
-if __name__ == "__main__":
-    pass

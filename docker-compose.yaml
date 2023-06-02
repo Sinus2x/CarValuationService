@@ -33,7 +33,6 @@ services:
 
   car_valuation_service:
     build: ./car_valuation_service
-#    image: angriff07/grafana_car_valuation_service:latest
     ports:
       - 8000:8000
     depends_on:

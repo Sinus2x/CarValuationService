@@ -1,3 +1,8 @@
+"""
+Car Valuation Service
+"""
+
+
 import os
 import asyncio
 import time
@@ -14,50 +19,57 @@ logger = getLogger()
 GRAPHITE_HOST = os.environ.get('GRAPHITE_HOST', None)
 GRAPHITE_PORT = os.environ.get('GRAPHITE_PORT', None)
 logger.warning(f'graphite url: {GRAPHITE_HOST}, port: {GRAPHITE_PORT}')
-statsd = StatsClient(GRAPHITE_HOST, int(GRAPHITE_PORT), prefix='car_valuation_service')
+statsd = StatsClient(
+    GRAPHITE_HOST,
+    int(GRAPHITE_PORT),
+    prefix='car_valuation_service'
+)
 
 
 class Prediction(BaseModel):
+    """
+    Prediction class for validation
+    """
     predicted_value: int
 
 
-model = None
+model = Model()
+
 app = FastAPI()
 
 
-# create a route
 @app.get("/")
 def index():
+    """
+    Index handler
+    """
     return {"text": "Welcome to Car Valuation Service!"}
 
 
-# Register the function to run during startup
-@app.on_event("startup")
-def startup_event():
-    global model
-    model = Model()
-
-
 @app.post("/predict")
-async def predict(x: Car):
-    statsd.incr(f'predict_price.count')
+async def predict(car: Car) -> Prediction:
+    """
+    Predict car price handler
+    """
+    statsd.incr('predict_price.count')
     error_brands = {
         'CheryExeed', 'Dongfeng', 'EXEED', 'GMC',
         'Haima', 'Isuzu', 'JMC', 'Saturn', 'Tianye', 'ЗИЛ'
     }
-    if x.brand in error_brands:
-        statsd.incr(f'predict_price.request_status.error.count')
+    if car.brand in error_brands:
+        statsd.incr('predict_price.request_status.error.count')
         raise KeyError
 
     time_start = time.perf_counter()
-    pred = await model.predict(x.dict())
+    pred = await model.predict(car.dict())
     time_end = time.perf_counter()
-    statsd.timing(f'predict_price.timing.inference_time', time_end - time_start)
-    statsd.incr(f'predict_price.request_status.success.count')
-
-    return Prediction(
-        predicted_value=int(pred)
+    statsd.timing(
+        'predict_price.timing.inference_time',
+        time_end - time_start
     )
+    statsd.incr('predict_price.request_status.success.count')
+
+    return Prediction(predicted_value=int(pred))
 
 
 if __name__ == "__main__":
