@@ -7,12 +7,13 @@
 | Название проекта | **Улучшение оценки авто**                         |
 
 ## Запуск
-`git clone -b litvinov_load_testing_bench https://github.com/Sinus2x/CarValuationService.git` <br />
+`git clone -b dev https://github.com/Sinus2x/CarValuationService.git` <br />
 `cd ./CarValuationService` <br />
 `docker volume create --name=grafana-volume` <br />
 `docker-compose up -d`
 
 Сервис доступен по http://0.0.0.0:8000/docs, где во вкладке `/predict` можно протестировать запрос на оценку стоимости машины.
+Примеры запросов есть в experiments/car_inference_test.txt
 
 | Название | Адрес                    |
 |----------|--------------------------|

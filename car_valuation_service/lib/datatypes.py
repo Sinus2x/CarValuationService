@@ -1,10 +1,17 @@
-from pydantic import BaseModel
+"""
+Модуль валидации типов в сервисе
+"""
+
 from datetime import datetime
-import typing
-from typing import Optional
+from typing import Optional, Literal
+from pydantic import BaseModel
 
 
 class Car(BaseModel):
+    """
+    Класс Car для валидации типов при подаче
+    сервису входных признаков автомобиля.
+    """
     brand: str
     model: str
     sale_end_date: datetime
@@ -20,8 +27,16 @@ class Car(BaseModel):
     engine_type: str
     doors_number: int
     color: str
-    pts: typing.Literal['Оригинал', 'Дубликат', 'Электронный'] = 'неизвестно'
-    owners_count: typing.Literal['1', '2', '3', '> 3']
+    pts: Literal['Оригинал', 'Дубликат', 'Электронный'] = 'неизвестно'
+    owners_count: Literal['1', '2', '3', '> 3']
     mileage: int
     latitude: float
     longitude: float
+
+
+class Prediction(BaseModel):
+    """
+    Класс Prediction для валидации типов при
+    выдаче предсказанной цены
+    """
+    predicted_price: int

@@ -1,3 +1,12 @@
+"""
+Модуль генерации объявлений фреймворком Locust.
+
+Для демонстрации нагрузки и отклика сервиса,
+генерируются наборы признаков автомобиля и передаются
+в ручку /predict сервиса.
+"""
+
+
 import random
 from locust import HttpUser, task, between
 
@@ -275,6 +284,9 @@ longitude = (19.892177, 177.689817)
 
 
 def generate_car():
+    """
+    Функция генерации словаря с признаками автомобиля.
+    """
     return {
         "brand": random.choice(brand),
         "model": random.choice(model),
@@ -299,8 +311,16 @@ def generate_car():
 
 
 class QuickstartUser(HttpUser):
+    """
+    Класс "пользователя" подающего запрос в ручку сервиса /predict со
+    сгенерированными признаками автомобиля.
+    """
     wait_time = between(0.5, 1)
 
     @task
     def predict(self):
+        """
+        Метод класса "пользователя", посылающий POST запрос в
+        ручку сервиса /predict со сгенерированными признаками автомобиля.
+        """
         self.client.post('/predict/', json=generate_car())
