@@ -5,6 +5,7 @@
 
 
 import pickle
+from datetime import datetime
 from pathlib import Path
 from gensim.models.word2vec import Word2Vec
 from gensim.models import KeyedVectors
@@ -97,6 +98,8 @@ def load_models() -> dict:
     )
     mod2vec = Word2VecTransformer(w2v_model=modification_w2v_model)
 
+    cur_year = datetime.now().year + ((datetime.now().month - 1) / 12)
+
     features_models_dict = {
         "geocode_class_instance": geocode_class_instance,
         "lemmatizer": lemmatizer,
@@ -105,7 +108,8 @@ def load_models() -> dict:
         "desc2vec": desc2vec,
         "tfidf": tfidf,
         "eq2vec": eq2vec,
-        "mod2vec": mod2vec
+        "mod2vec": mod2vec,
+        "cur_year": cur_year
     }
 
     return features_models_dict

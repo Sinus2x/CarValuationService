@@ -83,11 +83,13 @@ def get_generation_restyling(car: dict) -> dict:
     return car
 
 
-def get_mileage_per_year(car: dict) -> dict:
+def get_mileage_per_year(car: dict, models_dict: dict) -> dict:
     """
     Вычисляет пробег в год по полям `mileage`, `year`.
     """
-    car['mileage_per_year'] = car['mileage'] / (2023.5 - car['year'])
+    car['mileage_per_year'] = car['mileage'] / (
+            models_dict['cur_year'] - car['year']
+    )
     return car
 
 
@@ -130,11 +132,11 @@ def features_extract(car: dict, models_dict: dict) -> dict:
         get_horse_power,
         get_engine_volume,
         get_generation_restyling,
-        get_mileage_per_year,
         get_concat_feature,
     ]
     for get_feature in features:
         car = get_feature(car)
     car = get_city(car, models_dict)
     car = get_base_price(car, models_dict)
+    car = get_mileage_per_year(car, models_dict)
     return car
