@@ -14,6 +14,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 import numpy as np
 import yaml
+from lib.utils.base_price_grouper import BasePriceGrouper
 
 
 CONFIG_DIR = Path(__file__).parent.parent
@@ -65,7 +66,8 @@ def load_models() -> dict:
 
     equipment_modes = pd.read_csv(ROOT_DIR / CONFIG["equipment_path"])
 
-    base_price_grouper = pd.read_csv(ROOT_DIR / CONFIG["base_price_path"])
+    df_groups = pd.read_csv(ROOT_DIR / CONFIG["base_price_path"])
+    base_price_grouper = BasePriceGrouper(df_groups)
 
     w2v_model = Word2Vec.load(str(ROOT_DIR / CONFIG["desc_w2v_path"]))
     w2v_model.wv = KeyedVectors.load(

@@ -4,7 +4,6 @@
 """
 
 import re
-import pandas as pd
 
 
 def get_city(car: dict, models_dict: dict) -> dict:
@@ -105,14 +104,11 @@ def get_concat_feature(car: dict) -> dict:
 
 def get_base_price(car: dict, models_dict: dict) -> dict:
     """
-    Получаем базовую цену по группе полей
-    `brand`, `model`, `generation`, `modification`.
+    Получаем базовую цену по группе полей,
+    используя класс `BasePriceGrouper`.
     """
-    base_price_grouper_cols = ['brand', 'model', 'generation', 'modification']
     base_price_grouper = models_dict['base_price_grouper']
-    base_price_df = pd.Series(car).to_frame().T[base_price_grouper_cols]
-    base_price = base_price_df.merge(base_price_grouper, how='left')
-    car['base_price'] = base_price['base_price'].values
+    car['base_price'] = base_price_grouper.predict(car)
     return car
 
 
