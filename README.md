@@ -13,7 +13,7 @@
 `docker-compose up -d`
 
 Сервис доступен по http://0.0.0.0:8000/docs, где во вкладке `/predict` можно протестировать запрос на оценку стоимости машины.
-Примеры запросов есть в experiments/car_inference_test.txt
+Примеры запросов есть в [experiments/car_inference_test.txt](experiments/car_inference_test.txt)
 
 | Название | Адрес                    |
 |----------|--------------------------|
