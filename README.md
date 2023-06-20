@@ -7,7 +7,7 @@
 | Название проекта | **Улучшение оценки стоимости авто**               |
 
 ## Запуск
-`git clone -b dev https://github.com/Sinus2x/CarValuationService.git` <br />
+`git clone https://github.com/Sinus2x/CarValuationService.git` <br />
 `cd ./CarValuationService` <br />
 `docker volume create --name=grafana-volume` <br />
 `docker-compose up -d`
