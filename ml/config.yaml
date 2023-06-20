@@ -1,2 +1,0 @@
-task: sentiment-analysis
-model_path: "experiments/model_no_text"
